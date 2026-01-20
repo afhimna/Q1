@@ -43,9 +43,9 @@ body{
   font-size:1rem;
 }
 
-/* ===== TRANSITION WRAPPER ===== */
+/* ===== TRANSITION STATE ===== */
 #quiz{
-  transition:.45s ease;
+  transition:.45s cubic-bezier(.4,0,.2,1);
 }
 .fade-out{
   opacity:0;
@@ -54,6 +54,11 @@ body{
 .fade-in{
   opacity:1;
   transform:translateY(0);
+}
+.next-transition{
+  opacity:0;
+  transform:translateY(-14px);
+  transition:.35s cubic-bezier(.4,0,.2,1);
 }
 
 /* ===== QUESTION ===== */
@@ -268,6 +273,7 @@ function check(btn,i){
   let q=data[idx];
   let cor=Number(q.answer_index);
   let buttons=[...answers.children];
+
   answers.classList.add("focus");
   btn.classList.add("chosen");
 
@@ -297,7 +303,20 @@ function check(btn,i){
   nextBtn.classList.remove("hidden");
 }
 
-nextBtn.onclick=()=>{idx++; idx<data.length?show():finish();};
+/* === SMOOTH NEXT TRANSITION (UPGRADE) === */
+nextBtn.onclick=()=>{
+  quiz.classList.add("next-transition");
+
+  setTimeout(()=>{
+    idx++;
+    if(idx<data.length){
+      quiz.classList.remove("next-transition");
+      show();
+    }else{
+      finish();
+    }
+  },350);
+};
 
 function finish(){
   quiz.classList.add("fade-out");
