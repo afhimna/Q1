@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kuis Nahwu</title>
+
+<style>
+*{box-sizing:border-box;font-family:system-ui,sans-serif}
+body{
+  margin:0;
+  background:#0f172a;
+  color:#e5e7eb;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  min-height:100vh;
+}
+.quiz-box{
+  width:100%;
+  max-width:650px;
+  background:#020617;
+  border:1px solid #1e293b;
+  border-radius:16px;
+  padding:20px;
+}
+h1{text-align:center;margin-bottom:15px}
+#questionText{margin-bottom:15px}
+.answer-buttons{display:grid;gap:10px}
+.answer-buttons button{
+  background:#020617;
+  border:1px solid #334155;
+  color:#e5e7eb;
+  padding:10px;
+  border-radius:10px;
+  text-align:left;
+  cursor:pointer;
+}
+.answer-buttons button:hover{background:#1e293b}
+.answer-buttons button:disabled{opacity:.6}
+#result{margin-top:15px}
+.correct{color:#22c55e;font-weight:bold}
+.wrong{color:#ef4444;font-weight:bold}
+.explain{margin-top:6px;font-size:.9rem;color:#cbd5f5}
+#nextBtn{
+  margin-top:16px;
+  width:100%;
+  padding:10px;
+  background:#2563eb;
+  border:none;
+  border-radius:10px;
+  color:white;
+  cursor:pointer;
+}
+.hidden{display:none}
+#finalResult{margin-top:10px}
+.wrong-list{
+  margin-top:15px;
+  border-top:1px solid #1e293b;
+  padding-top:10px;
+}
+.wrong-item{margin-bottom:12px}
+.feedback{
+  margin-top:12px;
+  padding:10px;
+  border-radius:10px;
+  background:#020617;
+  border:1px solid #334155;
+}
+</style>
+</head>
+
+<body>
+
+<div class="quiz-box">
+<h1>Kuis Nahwu</h1>
+
+<div id="quiz">
+  <div id="questionText"></div>
+  <div id="answers" class="answer-buttons"></div>
+  <div id="result" class="hidden"></div>
+  <button id="nextBtn" class="hidden">Soal Selanjutnya</button>
+</div>
+
+<div id="finalResult" class="hidden">
+  <h2>Hasil Akhir</h2>
+  <div id="scoreText"></div>
+  <div class="feedback" id="feedbackText"></div>
+  <div class="wrong-list" id="wrongList"></div>
+</div>
+</div>
+
+<script>
+const POINT = 5;
+let questions=[], shuffled=[], index=0;
+let score=0, correctCount=0;
+let wrongAnswers=[];
+
+fetch("soal.json")
+.then(r=>r.json())
+.then(data=>{
+  questions=data;
+  shuffled=questions.sort(()=>Math.random()-0.5);
+  render();
+});
+
+function render(){
+  if(index>=shuffled.length){showResult();return;}
+  let q=shuffled[index];
+
+  document.getElementById("questionText").innerText=
+    `Soal ${index+1}: ${q.question}`;
+
+  let opts=[q.option_A,q.option_B,q.option_C,q.option_D,q.option_E];
+  let box=document.getElementById("answers");
+  box.innerHTML="";
+
+  opts.forEach((t,i)=>{
+    let b=document.createElement("button");
+    b.textContent=t;
+    b.onclick=()=>check(i);
+    box.appendChild(b);
+  });
+
+  document.getElementById("result").classList.add("hidden");
+  document.getElementById("nextBtn").classList.add("hidden");
+}
+
+function check(sel){
+  let q=shuffled[index];
+  let cor=Number(q.answer_index);
+  let r=document.getElementById("result");
+  r.classList.remove("hidden");
+
+  if(sel===cor){
+    score+=POINT;
+    correctCount++;
+    r.innerHTML=`<div class="correct">Jawaban Benar</div>
+                 <div class="explain">${q.explanation}</div>`;
+  }else{
+    wrongAnswers.push({
+      question:q.question,
+      correct:q["option_"+String.fromCharCode(65+cor)],
+      explanation:q.explanation
+    });
+    r.innerHTML=`<div class="wrong">Jawaban Salah</div>
+                 <div class="explain">${q.explanation}</div>`;
+  }
+
+  document.querySelectorAll(".answer-buttons button")
+    .forEach(b=>b.disabled=true);
+  document.getElementById("nextBtn").classList.remove("hidden");
+}
+
+nextBtn.onclick=()=>{index++;render();};
+
+function showResult(){
+  quiz.classList.add("hidden");
+  finalResult.classList.remove("hidden");
+
+  scoreText.innerHTML=`
+    Benar: ${correctCount}<br>
+    Skor: <b>${score}</b> / ${shuffled.length*POINT}
+  `;
+
+  let fb="";
+  if(correctCount<=5) fb="❌ Wawasan nahwu kamu kurang, belajar lagi ya dek";
+  else if(correctCount<=10) fb="⚠️ Sudah ada dasar, tapi masih perlu banyak latihan";
+  else if(correctCount<=15) fb="👍 Pemahamanmu cukup baik, teruskan belajar";
+  else fb="🌟 Luar biasa! Wawasan nahwu kamu sangat bagus";
+
+  feedbackText.innerText=fb;
+
+  if(wrongAnswers.length){
+    wrongList.innerHTML="<h3>Soal yang Salah</h3>";
+    wrongAnswers.forEach((w,i)=>{
+      wrongList.innerHTML+=`
+        <div class="wrong-item">
+          <b>${i+1}. ${w.question}</b><br>
+          Jawaban benar: ${w.correct}<br>
+          <small>${w.explanation}</small>
+        </div>`;
+    });
+  }else{
+    wrongList.innerHTML="<b>Semua jawaban benar 🎉</b>";
+  }
+}
+</script>
+
+</body>
+</html>
