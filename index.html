@@ -43,22 +43,25 @@ body{
   font-size:1rem;
 }
 
-/* ===== TRANSITION STATE ===== */
+/* ===== QUIZ TRANSITION STATES ===== */
 #quiz{
   transition:.45s cubic-bezier(.4,0,.2,1);
-}
-.fade-out{
-  opacity:0;
-  transform:translateY(-10px);
 }
 .fade-in{
   opacity:1;
   transform:translateY(0);
 }
+.fade-out{
+  opacity:0;
+  transform:translateY(-10px);
+}
 .next-transition{
   opacity:0;
   transform:translateY(-14px);
-  transition:.35s cubic-bezier(.4,0,.2,1);
+}
+.enter-transition{
+  opacity:0;
+  transform:translateY(14px);
 }
 
 /* ===== QUESTION ===== */
@@ -166,7 +169,7 @@ body{
 
 .hidden{display:none}
 
-/* ===== FINAL ===== */
+/* ===== FINAL RESULT ===== */
 #finalResult{
   opacity:0;
   transform:scale(.96);
@@ -198,7 +201,7 @@ body{
 
 <div class="quiz-box">
 
-<div class="score-board" id="scoreBoard">
+<div class="score-board">
 Skor: <span id="scoreNum">0</span> / 100<br>
 Benar: <span id="cNum">0</span> | Salah: <span id="wNum">0</span>
 </div>
@@ -248,11 +251,10 @@ function updateScore(){
 }
 
 function show(){
-  quiz.classList.add("fade-out");
-  setTimeout(()=>{
-    quiz.classList.remove("fade-out");
-    quiz.classList.add("fade-in");
+  quiz.classList.add("enter-transition");
+  quiz.classList.remove("fade-in");
 
+  setTimeout(()=>{
     let q=data[idx];
     questionText.innerText=`Soal ${idx+1}: ${q.question}`;
     answers.innerHTML="";
@@ -266,7 +268,12 @@ function show(){
     result.classList.add("hidden");
     nextBtn.classList.add("hidden");
     answers.classList.remove("focus");
-  },300);
+
+    requestAnimationFrame(()=>{
+      quiz.classList.remove("enter-transition");
+      quiz.classList.add("fade-in");
+    });
+  },180);
 }
 
 function check(btn,i){
@@ -303,7 +310,6 @@ function check(btn,i){
   nextBtn.classList.remove("hidden");
 }
 
-/* === SMOOTH NEXT TRANSITION (UPGRADE) === */
 nextBtn.onclick=()=>{
   quiz.classList.add("next-transition");
 
