@@ -1,365 +1,322 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kuis Nahwu</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Amiri&display=swap" rel="stylesheet">
-
-<style>
-*{box-sizing:border-box}
-body{
-  margin:0;
-  min-height:100vh;
-  background:radial-gradient(circle at top,#020617,#000);
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  color:#e5e7eb;
-  font-family:"Times New Roman",serif;
-}
-
-.quiz-box{
-  width:100%;
-  max-width:720px;
-  background:rgba(2,6,23,.96);
-  border:1px solid #1e293b;
-  border-radius:22px;
-  padding:25px;
-  box-shadow:0 0 40px rgba(0,0,0,.6);
-}
-
-/* ===== TRANSISI SOAL ===== */
-.question-wrap{
-  transition:.45s ease;
-}
-.question-wrap.hide{
-  opacity:0;
-  transform:translateY(18px);
-}
-.question-wrap.show{
-  opacity:1;
-  transform:translateY(0);
-}
-
-#questionText{
-  font-family:"Amiri",serif;
-  font-size:1.45rem;
-  margin:22px 0;
-  text-align:center;
-}
-
-.answer-buttons{
-  display:grid;
-  gap:14px;
-}
-.answer-buttons button{
-  padding:14px;
-  background:#020617;
-  border:1px solid #334155;
-  border-radius:16px;
-  color:#e5e7eb;
-  font-size:1.2rem;
-  cursor:pointer;
-  transition:.25s ease;
-  font-family:"Amiri",serif;
-}
-.answer-buttons button:hover{background:#1e293b}
-.answer-buttons button.correct{
-  border-color:#22c55e;
-  color:#22c55e;
-  box-shadow:0 0 12px rgba(34,197,94,.45);
-}
-.answer-buttons button.wrong{
-  background:#3f0d0d;
-  border-color:#ef4444;
-  color:#ef4444;
-}
-
-.score-board{
-  margin-top:20px;
-  padding:14px;
-  border-radius:16px;
-  background:#020617;
-  border:1px solid #334155;
-  text-align:center;
-}
-.score-pop{animation:scorePop .4s ease}
-@keyframes scorePop{
-  0%{transform:scale(1)}
-  50%{transform:scale(1.15)}
-  100%{transform:scale(1)}
-}
-
-#result{
-  margin-top:18px;
-  padding:15px;
-  border-radius:16px;
-  border:1px solid #334155;
-}
-.correct-text{color:#22c55e;font-weight:bold}
-.wrong-text{color:#ef4444;font-weight:bold}
-.explain{
-  margin-top:10px;
-  font-family:"Amiri",serif;
-  background:#020617;
-  padding:12px;
-  border-radius:12px;
-  border-left:4px solid #38bdf8;
-  line-height:1.7;
-}
-
-#nextBtn{
-  margin-top:22px;
-  width:100%;
-  padding:14px;
-  border:none;
-  border-radius:16px;
-  background:#2563eb;
-  color:white;
-  cursor:pointer;
-}
-#nextBtn:hover{background:#1d4ed8}
-
-.hidden{display:none}
-
-#finalResult{
-  opacity:0;
-  transform:scale(.96);
-  transition:.5s ease;
-}
-#finalResult.show{
-  opacity:1;
-  transform:scale(1);
-}
-
-.feedback{
-  margin-top:15px;
-  padding:12px;
-  border-radius:14px;
-  border:1px solid #334155;
-}
-
-/* ===== REKAP SALAH ===== */
-.wrong-item{
-  margin-top:16px;
-  padding:14px;
-  border-radius:16px;
-  background:#020617;
-  border:1px solid #334155;
-}
-.wrong-item h4{margin:0 0 8px;font-weight:normal}
-.bad{color:#ef4444}
-.good{color:#22c55e}
-.explain-box{
-  margin-top:10px;
-  padding:10px;
-  border-left:4px solid #38bdf8;
-  background:#020617;
-  border-radius:12px;
-  font-family:"Amiri",serif;
-}
-
-/* ===== ACTION ===== */
-.action-box{
-  margin-top:25px;
-  display:grid;
-  gap:12px;
-}
-.action-box button{
-  padding:14px;
-  border:none;
-  border-radius:16px;
-  cursor:pointer;
-  color:white;
-}
-.wa{background:#22c55e}
-.ig{background:#db2777}
-.fb{background:#1877f2}
-.yt{background:#dc2626}
-.gg{background:#334155}
-</style>
-</head>
-
-<body>
-<div class="quiz-box">
-
-<div id="quiz">
-  <div class="question-wrap show" id="qWrap">
-    <div id="questionText"></div>
-    <div id="answers" class="answer-buttons"></div>
-  </div>
-
-  <div class="score-board">
-    Skor: <b id="scoreNum">0</b> / 100<br>
-    Benar: <span id="cNum">0</span> | Salah: <span id="wNum">0</span>
-  </div>
-
-  <div id="result" class="hidden"></div>
-  <button id="nextBtn" class="hidden">Soal Selanjutnya</button>
-</div>
-
-<div id="finalResult" class="hidden">
-  <h2>Hasil Akhir</h2>
-  <div id="scoreText"></div>
-  <div class="feedback" id="feedbackText"></div>
-
-  <h3>📌 Rekap Jawaban Salah</h3>
-  <div id="wrongList"></div>
-
-  <div class="action-box">
-    <button class="wa" onclick="shareWA()">📱 Share Story WhatsApp</button>
-    <button class="ig" onclick="shareIG()">📸 Share Story Instagram</button>
-    <button class="fb" onclick="shareFB()">📘 Share Facebook</button>
-    <button class="yt" onclick="goYouTube()">▶️ YouTube</button>
-    <button class="gg" onclick="goGoogle()">🌐 Google</button>
-  </div>
-</div>
-
-</div>
-
-<script>
-const POINT=5;
-let data=[],idx=0,score=0,correct=0,wrongCount=0,wrong=[];
-
-const scoreNum=document.getElementById("scoreNum");
-const cNum=document.getElementById("cNum");
-const wNum=document.getElementById("wNum");
-const questionText=document.getElementById("questionText");
-const answers=document.getElementById("answers");
-const result=document.getElementById("result");
-const nextBtn=document.getElementById("nextBtn");
-const quiz=document.getElementById("quiz");
-const finalResult=document.getElementById("finalResult");
-const scoreText=document.getElementById("scoreText");
-const feedbackText=document.getElementById("feedbackText");
-const wrongList=document.getElementById("wrongList");
-const qWrap=document.getElementById("qWrap");
-
-fetch("soal.json").then(r=>r.json()).then(d=>{
-  data=d.sort(()=>Math.random()-0.5);
-  show();
-});
-
-function animateNumber(el,from,to){
-  el.classList.add("score-pop");
-  let cur=from,step=(to-from)/15;
-  let i=setInterval(()=>{
-    cur+=step;
-    el.textContent=Math.round(cur);
-    if(cur>=to){
-      el.textContent=to;
-      clearInterval(i);
-      setTimeout(()=>el.classList.remove("score-pop"),300);
-    }
-  },20);
-}
-function updateScore(){
-  animateNumber(scoreNum,Number(scoreNum.textContent),score);
-  cNum.textContent=correct;
-  wNum.textContent=wrongCount;
-}
-
-function show(){
-  qWrap.classList.add("hide");
-  setTimeout(()=>{
-    let q=data[idx];
-    questionText.innerText=`Soal ${idx+1}: ${q.question}`;
-    answers.innerHTML="";
-    ["A","B","C","D","E"].forEach((l,i)=>{
-      let b=document.createElement("button");
-      b.textContent=q["option_"+l];
-      b.onclick=()=>check(b,i);
-      answers.appendChild(b);
-    });
-    result.classList.add("hidden");
-    nextBtn.classList.add("hidden");
-    qWrap.classList.remove("hide");
-    qWrap.classList.add("show");
-  },300);
-}
-
-function check(btn,i){
-  let q=data[idx];
-  let cor=Number(q.answer_index);
-  let buttons=[...answers.children];
-
-  buttons.forEach((b,n)=>{
-    if(n===cor)b.classList.add("correct");
-    if(n===i && i!==cor)b.classList.add("wrong");
-    b.disabled=true;
-  });
-
-  result.classList.remove("hidden");
-
-  if(i===cor){
-    correct++; score+=POINT;
-    result.innerHTML=`<div class="correct-text">✔ Jawaban Benar</div>
-    <div class="explain">${q.explanation}</div>`;
-  }else{
-    wrongCount++;
-    wrong.push({
-      q:q.question,
-      wrong:q["option_"+String.fromCharCode(65+i)],
-      correct:q["option_"+String.fromCharCode(65+cor)],
-      exp:q.explanation
-    });
-    result.innerHTML=`<div class="wrong-text">✖ Jawaban Salah</div>`;
-  }
-
-  updateScore();
-  nextBtn.classList.remove("hidden");
-}
-
-nextBtn.onclick=()=>{
-  idx++;
-  if(idx<data.length) show();
-  else finish();
-};
-
-function finish(){
-  quiz.classList.add("hidden");
-  finalResult.classList.remove("hidden");
-  finalResult.classList.add("show");
-
-  scoreText.innerHTML=`Benar: <b>${correct}</b><br>Skor Akhir: <b>${score}</b>`;
-  feedbackText.innerText=
-    correct<=5?"❌ Wawasan nahwu kamu kurang":
-    correct<=10?"⚠️ Sudah ada dasar":
-    correct<=15?"👍 Pemahaman cukup baik":"🌟 Luar biasa!";
-
-  if(wrong.length===0){
-    wrongList.innerHTML="<p>🎉 Tidak ada jawaban salah</p>";
-  }else{
-    wrong.forEach((w,i)=>{
-      wrongList.innerHTML+=`
-      <div class="wrong-item">
-        <h4>${i+1}. ${w.q}</h4>
-        <div class="bad">❌ Jawaban kamu: ${w.wrong}</div>
-        <div class="good">✅ Jawaban benar: ${w.correct}</div>
-        <div class="explain-box">${w.exp}</div>
-      </div>`;
-    });
-  }
-}
-
-/* ===== ACTION ===== */
-const shareText=()=>`Aku baru saja mengerjakan Kuis Nahwu 📝
-Skor: ${score}/100
-Benar: ${correct}, Salah: ${wrongCount}`;
-
-function shareWA(){
-  window.open(`https://wa.me/?text=${encodeURIComponent(shareText())}`,'_blank');
-}
-function shareIG(){
-  navigator.share({title:"Kuis Nahwu",text:shareText(),url:location.href});
-}
-function shareFB(){
-  window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(location.href)}`,'_blank');
-}
-function goYouTube(){location.href="https://www.youtube.com"}
-function goGoogle(){location.href="https://www.google.com"}
-</script>
-</body>
-</html>
+<!DOCTYPE html>  <html lang="id">  
+<head>  
+<meta charset="UTF-8">  
+<meta name="viewport" content="width=device-width, initial-scale=1.0">  
+<title>Kuis Nahwu</title>  <link href="https://fonts.googleapis.com/css2?family=Amiri&display=swap" rel="stylesheet">  <style>  
+*{box-sizing:border-box}  
+body{  
+  margin:0;  
+  min-height:100vh;  
+  background:radial-gradient(circle at top,#020617,#000);  
+  display:flex;  
+  justify-content:center;  
+  align-items:center;  
+  color:#e5e7eb;  
+  font-family:"Times New Roman",serif;  
+}  
+  
+.quiz-box{  
+  width:100%;  
+  max-width:720px;  
+  background:rgba(2,6,23,.96);  
+  border:1px solid #1e293b;  
+  border-radius:22px;  
+  padding:25px;  
+  box-shadow:0 0 40px rgba(0,0,0,.6);  
+}  
+  
+#questionText{  
+  font-family:"Amiri",serif;  
+  font-size:1.45rem;  
+  margin:22px 0;  
+  text-align:center;  
+}  
+  
+.answer-buttons{  
+  display:grid;  
+  gap:14px;  
+}  
+.answer-buttons button{  
+  padding:14px;  
+  background:#020617;  
+  border:1px solid #334155;  
+  border-radius:16px;  
+  color:#e5e7eb;  
+  font-size:1.2rem;  
+  cursor:pointer;  
+  transition:.25s ease;  
+  font-family:"Amiri",serif;  
+}  
+.answer-buttons button:hover{background:#1e293b}  
+.answer-buttons button.correct{  
+  border-color:#22c55e;  
+  color:#22c55e;  
+  box-shadow:0 0 12px rgba(34,197,94,.45);  
+}  
+.answer-buttons button.wrong{  
+  background:#3f0d0d;  
+  border-color:#ef4444;  
+  color:#ef4444;  
+}  
+  
+.score-board{  
+  margin-top:20px;  
+  padding:14px;  
+  border-radius:16px;  
+  background:#020617;  
+  border:1px solid #334155;  
+  text-align:center;  
+}  
+.score-pop{animation:scorePop .4s ease}  
+@keyframes scorePop{  
+  0%{transform:scale(1)}  
+  50%{transform:scale(1.15)}  
+  100%{transform:scale(1)}  
+}  
+  
+#result{  
+  margin-top:18px;  
+  padding:15px;  
+  border-radius:16px;  
+  border:1px solid #334155;  
+}  
+.correct-text{color:#22c55e;font-weight:bold}  
+.wrong-text{color:#ef4444;font-weight:bold}  
+.explain{  
+  margin-top:10px;  
+  font-family:"Amiri",serif;  
+  background:#020617;  
+  padding:12px;  
+  border-radius:12px;  
+  border-left:4px solid #38bdf8;  
+  line-height:1.7;  
+}  
+  
+#nextBtn{  
+  margin-top:22px;  
+  width:100%;  
+  padding:14px;  
+  border:none;  
+  border-radius:16px;  
+  background:#2563eb;  
+  color:white;  
+  cursor:pointer;  
+}  
+#nextBtn:hover{background:#1d4ed8}  
+  
+.hidden{display:none}  
+  
+#finalResult{  
+  opacity:0;  
+  transform:scale(.96);  
+  transition:.5s ease;  
+}  
+#finalResult.show{  
+  opacity:1;  
+  transform:scale(1);  
+}  
+  
+.feedback{  
+  margin-top:15px;  
+  padding:12px;  
+  border-radius:14px;  
+  border:1px solid #334155;  
+}  
+  
+/* ===== REKAP SALAH ===== */  
+.wrong-item{  
+  margin-top:16px;  
+  padding:14px;  
+  border-radius:16px;  
+  background:#020617;  
+  border:1px solid #334155;  
+}  
+.wrong-item h4{  
+  margin:0 0 8px;  
+  font-weight:normal;  
+}  
+.bad{color:#ef4444}  
+.good{color:#22c55e}  
+.explain-box{  
+  margin-top:10px;  
+  padding:10px;  
+  border-left:4px solid #38bdf8;  
+  background:#020617;  
+  border-radius:12px;  
+  font-family:"Amiri",serif;  
+}  
+  
+/* ===== ACTION ===== */  
+.action-box{  
+  margin-top:25px;  
+  display:grid;  
+  gap:12px;  
+}  
+.action-box button{  
+  padding:14px;  
+  border:none;  
+  border-radius:16px;  
+  cursor:pointer;  
+  color:white;  
+}  
+.wa{background:#22c55e}  
+.ig{background:#db2777}  
+.fb{background:#1877f2}  
+.yt{background:#dc2626}  
+.gg{background:#334155}  
+</style>  </head>  <body>  
+<div class="quiz-box">  <div id="quiz">  
+  <div id="questionText"></div>  
+  <div id="answers" class="answer-buttons"></div>    <div class="score-board">  
+    Skor: <b id="scoreNum">0</b> / 100<br>  
+    Benar: <span id="cNum">0</span> | Salah: <span id="wNum">0</span>  
+  </div>    <div id="result" class="hidden"></div>  
+  <button id="nextBtn" class="hidden">Soal Selanjutnya</button>  
+</div>  <div id="finalResult" class="hidden">  
+  <h2>Hasil Akhir</h2>  
+  <div id="scoreText"></div>  
+  <div class="feedback" id="feedbackText"></div>    <h3>📌 Rekap Jawaban Salah</h3>  
+  <div id="wrongList"></div>    <div class="action-box">  
+    <button class="wa" onclick="shareWA()">📱 Share Story WhatsApp</button>  
+    <button class="ig" onclick="shareIG()">📸 Share Story Instagram</button>  
+    <button class="fb" onclick="shareFB()">📘 Share Facebook</button>  
+    <button class="yt" onclick="goYouTube()">▶️ YouTube</button>  
+    <button class="gg" onclick="goGoogle()">🌐 Google</button>  
+  </div>  
+</div>  </div>  <script>  
+const POINT=5;  
+let data=[],idx=0,score=0,correct=0,wrongCount=0,wrong=[];  
+  
+const scoreNum=document.getElementById("scoreNum");  
+const cNum=document.getElementById("cNum");  
+const wNum=document.getElementById("wNum");  
+const questionText=document.getElementById("questionText");  
+const answers=document.getElementById("answers");  
+const result=document.getElementById("result");  
+const nextBtn=document.getElementById("nextBtn");  
+const quiz=document.getElementById("quiz");  
+const finalResult=document.getElementById("finalResult");  
+const scoreText=document.getElementById("scoreText");  
+const feedbackText=document.getElementById("feedbackText");  
+const wrongList=document.getElementById("wrongList");  
+  
+fetch("soal.json").then(r=>r.json()).then(d=>{  
+  data=d.sort(()=>Math.random()-0.5);  
+  show();  
+});  
+  
+function animateNumber(el,from,to){  
+  el.classList.add("score-pop");  
+  let cur=from,step=(to-from)/15;  
+  let i=setInterval(()=>{  
+    cur+=step;  
+    el.textContent=Math.round(cur);  
+    if(cur>=to){  
+      el.textContent=to;  
+      clearInterval(i);  
+      setTimeout(()=>el.classList.remove("score-pop"),300);  
+    }  
+  },20);  
+}  
+function updateScore(){  
+  animateNumber(scoreNum,Number(scoreNum.textContent),score);  
+  cNum.textContent=correct;  
+  wNum.textContent=wrongCount;  
+}  
+  
+function show(){  
+  let q=data[idx];  
+  questionText.innerText=`Soal ${idx+1}: ${q.question}`;  
+  answers.innerHTML="";  
+  ["A","B","C","D","E"].forEach((l,i)=>{  
+    let b=document.createElement("button");  
+    b.textContent=q["option_"+l];  
+    b.onclick=()=>check(b,i);  
+    answers.appendChild(b);  
+  });  
+  result.classList.add("hidden");  
+  nextBtn.classList.add("hidden");  
+}  
+  
+function check(btn,i){  
+  let q=data[idx];  
+  let cor=Number(q.answer_index);  
+  let buttons=[...answers.children];  
+  
+  buttons.forEach((b,n)=>{  
+    if(n===cor)b.classList.add("correct");  
+    if(n===i && i!==cor)b.classList.add("wrong");  
+    b.disabled=true;  
+  });  
+  
+  result.classList.remove("hidden");  
+  
+  if(i===cor){  
+    correct++; score+=POINT;  
+    result.innerHTML=`<div class="correct-text">✔ Jawaban Benar</div>  
+    <div class="explain">${q.explanation}</div>`;  
+  }else{  
+    wrongCount++;  
+    wrong.push({  
+      q:q.question,  
+      wrong:q["option_"+String.fromCharCode(65+i)],  
+      correct:q["option_"+String.fromCharCode(65+cor)],  
+      exp:q.explanation  
+    });  
+    result.innerHTML=`<div class="wrong-text">✖ Jawaban Salah</div>`;  
+  }  
+  
+  updateScore();  
+  nextBtn.classList.remove("hidden");  
+}  
+  
+nextBtn.onclick=()=>{  
+  idx++;  
+  if(idx<data.length) show();  
+  else finish();  
+};  
+  
+function finish(){  
+  quiz.classList.add("hidden");  
+  finalResult.classList.remove("hidden");  
+  finalResult.classList.add("show");  
+  
+  scoreText.innerHTML=`Benar: <b>${correct}</b><br>Skor Akhir: <b>${score}</b>`;  
+  feedbackText.innerText=  
+    correct<=5?"❌ Wawasan nahwu kamu kurang":  
+    correct<=10?"⚠️ Sudah ada dasar":  
+    correct<=15?"👍 Pemahaman cukup baik":"🌟 Luar biasa!";  
+  
+  if(wrong.length===0){  
+    wrongList.innerHTML="<p>🎉 Tidak ada jawaban salah</p>";  
+  }else{  
+    wrong.forEach((w,i)=>{  
+      wrongList.innerHTML+=`  
+      <div class="wrong-item">  
+        <h4>${i+1}. ${w.q}</h4>  
+        <div class="bad">❌ Jawaban kamu: ${w.wrong}</div>  
+        <div class="good">✅ Jawaban benar: ${w.correct}</div>  
+        <div class="explain-box">${w.exp}</div>  
+      </div>`;  
+    });  
+  }  
+}  
+  
+/* ===== ACTION ===== */  
+const shareText=()=>`Aku baru saja mengerjakan Kuis Nahwu 📝  
+Skor: ${score}/100  
+Benar: ${correct}, Salah: ${wrongCount}`;  
+  
+function shareWA(){  
+  window.open(`https://wa.me/?text=${encodeURIComponent(shareText())}`,'_blank');  
+}  
+function shareIG(){  
+  navigator.share({title:"Kuis Nahwu",text:shareText(),url:location.href});  
+}  
+function shareFB(){  
+  window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(location.href)}`,'_blank');  
+}  
+function goYouTube(){location.href="https://www.youtube.com"}  
+function goGoogle(){location.href="https://www.google.com"}  
+</script>  </body>  
+</html>  
