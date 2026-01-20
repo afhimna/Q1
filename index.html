@@ -21,6 +21,7 @@ body{
   text-align:center;
 }
 
+/* ===== CONTAINER ===== */
 .quiz-box{
   width:100%;
   max-width:720px;
@@ -29,9 +30,19 @@ body{
   border-radius:22px;
   padding:25px;
   box-shadow:0 0 40px rgba(0,0,0,.6);
-  overflow:hidden;
 }
 
+/* ===== SCORE ===== */
+.score-board{
+  margin-top:18px;
+  padding:12px;
+  border-radius:14px;
+  background:#020617;
+  border:1px solid #334155;
+  font-size:1rem;
+}
+
+/* ===== QUIZ ===== */
 #quiz{transition:.45s cubic-bezier(.4,0,.2,1)}
 .fade-in{opacity:1;transform:translateY(0)}
 .fade-out{opacity:0;transform:translateY(-10px)}
@@ -60,6 +71,7 @@ body{
   font-family:"Amiri",serif;
 }
 .answer-buttons button:hover{background:#1e293b}
+
 .answer-buttons.focus button:not(.chosen){opacity:.45}
 
 .answer-buttons button.correct{
@@ -77,7 +89,7 @@ body{
 
 @keyframes pulseOnce{
   0%{transform:scale(1)}
-  50%{transform:scale(1.035)}
+  50%{transform:scale(1.05)}
   100%{transform:scale(1)}
 }
 @keyframes microShake{
@@ -85,16 +97,6 @@ body{
   40%{transform:translateX(-3px)}
   80%{transform:translateX(3px)}
   100%{transform:translateX(0)}
-}
-
-/* SCORE DI BAWAH JAWABAN */
-.score-board{
-  margin-top:18px;
-  padding:12px;
-  border-radius:14px;
-  background:#020617;
-  border:1px solid #334155;
-  font-size:1rem;
 }
 
 #result{
@@ -115,9 +117,7 @@ body{
   border-radius:12px;
   border-left:4px solid #38bdf8;
   line-height:1.7;
-  opacity:0;
   animation:fadeExplain .4s ease forwards;
-  animation-delay:.2s;
 }
 @keyframes fadeExplain{
   from{opacity:0;transform:translateY(6px)}
@@ -135,14 +135,19 @@ body{
   cursor:pointer;
 }
 #nextBtn:hover{background:#1d4ed8}
+
 .hidden{display:none}
 
+/* ===== FINAL ===== */
 #finalResult{
   opacity:0;
   transform:scale(.96);
   transition:.5s ease;
 }
-#finalResult.show{opacity:1;transform:scale(1)}
+#finalResult.show{
+  opacity:1;
+  transform:scale(1);
+}
 .feedback{
   margin-top:15px;
   padding:12px;
@@ -162,7 +167,6 @@ body{
 </head>
 
 <body>
-
 <div class="quiz-box">
 
 <div id="quiz" class="fade-in">
@@ -192,25 +196,26 @@ body{
 const POINT=5;
 let data=[],idx=0,score=0,correct=0,wrongCount=0,wrong=[];
 
-/* FIX DOM BINDING */
 const scoreNum=document.getElementById("scoreNum");
 const cNum=document.getElementById("cNum");
 const wNum=document.getElementById("wNum");
 
-fetch("soal.json").then(r=>r.json()).then(d=>{
+fetch("soal.json")
+.then(r=>r.json())
+.then(d=>{
   data=d.sort(()=>Math.random()-0.5);
   show();
 });
 
 function animateNumber(el,from,to){
   let cur=from;
-  let step=(to-from)/18;
-  let i=setInterval(()=>{
+  let step=(to-from)/20;
+  let anim=setInterval(()=>{
     cur+=step;
     el.textContent=Math.round(cur);
-    if(cur>=to){
+    if((step>0 && cur>=to)||(step<0 && cur<=to)){
       el.textContent=to;
-      clearInterval(i);
+      clearInterval(anim);
     }
   },20);
 }
@@ -229,12 +234,14 @@ function show(){
     let q=data[idx];
     questionText.innerText=`Soal ${idx+1}: ${q.question}`;
     answers.innerHTML="";
+
     ["A","B","C","D","E"].forEach((l,i)=>{
       let b=document.createElement("button");
       b.textContent=q["option_"+l];
       b.onclick=()=>check(b,i);
       answers.appendChild(b);
     });
+
     result.classList.add("hidden");
     nextBtn.classList.add("hidden");
     answers.classList.remove("focus");
@@ -284,7 +291,12 @@ nextBtn.onclick=()=>{
   quiz.classList.add("next-transition");
   setTimeout(()=>{
     idx++;
-    idx<data.length ? show() : finish();
+    if(idx<data.length){
+      quiz.classList.remove("next-transition");
+      show();
+    }else{
+      finish();
+    }
   },350);
 };
 
@@ -296,10 +308,12 @@ function finish(){
     finalResult.classList.add("show");
 
     scoreText.innerHTML=`Benar: <b>${correct}</b><br>Skor Akhir: <b>${score}</b>`;
+
     feedbackText.innerText=
       correct<=5?"❌ Wawasan nahwu kamu kurang":
       correct<=10?"⚠️ Sudah ada dasar":
-      correct<=15?"👍 Pemahaman cukup baik":"🌟 Luar biasa!";
+      correct<=15?"👍 Pemahaman cukup baik":
+      "🌟 Luar biasa!";
 
     if(wrong.length){
       wrongList.innerHTML="<h3>Soal yang Salah</h3>";
@@ -316,6 +330,5 @@ function finish(){
   },400);
 }
 </script>
-
 </body>
 </html>
