@@ -5,67 +5,130 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Kuis Nahwu</title>
 
+<link href="https://fonts.googleapis.com/css2?family=Amiri&display=swap" rel="stylesheet">
+
 <style>
-*{box-sizing:border-box;font-family:system-ui,sans-serif}
+*{box-sizing:border-box}
 body{
   margin:0;
-  background:#0f172a;
-  color:#e5e7eb;
+  min-height:100vh;
+  background:radial-gradient(circle at top,#020617,#000);
   display:flex;
   justify-content:center;
   align-items:center;
-  min-height:100vh;
+  color:#e5e7eb;
+  font-family:"Times New Roman",serif;
+  text-align:center;
 }
+
 .quiz-box{
   width:100%;
-  max-width:650px;
-  background:#020617;
+  max-width:720px;
+  background:rgba(2,6,23,.95);
   border:1px solid #1e293b;
-  border-radius:16px;
-  padding:20px;
+  border-radius:22px;
+  padding:25px;
+  box-shadow:0 0 40px rgba(0,0,0,.6);
 }
-h1{text-align:center;margin-bottom:15px}
-#questionText{margin-bottom:15px}
-.answer-buttons{display:grid;gap:10px}
+
+.score-board{
+  margin-bottom:15px;
+  padding:12px;
+  border-radius:14px;
+  background:#020617;
+  border:1px solid #334155;
+  font-size:1rem;
+}
+
+#questionText{
+  font-family:"Amiri",serif;
+  font-size:1.4rem;
+  margin:20px 0;
+}
+
+.answer-buttons{
+  display:grid;
+  gap:12px;
+}
+
 .answer-buttons button{
+  padding:12px;
   background:#020617;
   border:1px solid #334155;
+  border-radius:14px;
   color:#e5e7eb;
-  padding:10px;
-  border-radius:10px;
-  text-align:left;
+  font-size:1.1rem;
   cursor:pointer;
+  transition:.2s;
 }
-.answer-buttons button:hover{background:#1e293b}
-.answer-buttons button:disabled{opacity:.6}
-#result{margin-top:15px}
-.correct{color:#22c55e;font-weight:bold}
-.wrong{color:#ef4444;font-weight:bold}
-.explain{margin-top:6px;font-size:.9rem;color:#cbd5f5}
-#nextBtn{
-  margin-top:16px;
-  width:100%;
-  padding:10px;
-  background:#2563eb;
-  border:none;
-  border-radius:10px;
-  color:white;
-  cursor:pointer;
+.answer-buttons button:hover{
+  background:#1e293b;
+  transform:scale(1.02);
 }
-.hidden{display:none}
-#finalResult{margin-top:10px}
-.wrong-list{
-  margin-top:15px;
-  border-top:1px solid #1e293b;
-  padding-top:10px;
+.answer-buttons button.correct{
+  background:#052e1a;
+  border-color:#22c55e;
+  color:#22c55e;
 }
-.wrong-item{margin-bottom:12px}
-.feedback{
-  margin-top:12px;
-  padding:10px;
-  border-radius:10px;
-  background:#020617;
+.answer-buttons button.wrong{
+  background:#3f0d0d;
+  border-color:#ef4444;
+  color:#ef4444;
+}
+.answer-buttons button:disabled{cursor:not-allowed}
+
+#result{
+  margin-top:18px;
+  padding:15px;
+  border-radius:14px;
   border:1px solid #334155;
+}
+
+.correct-text{color:#22c55e;font-weight:bold}
+.wrong-text{color:#ef4444;font-weight:bold}
+
+.explain{
+  margin-top:10px;
+  font-family:"Amiri",serif;
+  text-align:left;
+  background:#020617;
+  padding:10px;
+  border-radius:10px;
+  border-left:4px solid #38bdf8;
+}
+
+#nextBtn{
+  margin-top:20px;
+  width:100%;
+  padding:12px;
+  border:none;
+  border-radius:14px;
+  background:#2563eb;
+  color:white;
+  font-size:1rem;
+  cursor:pointer;
+}
+
+.hidden{display:none}
+
+.feedback{
+  margin-top:15px;
+  padding:12px;
+  border-radius:14px;
+  border:1px solid #334155;
+}
+
+.wrong-list{
+  margin-top:20px;
+  text-align:left;
+}
+.wrong-item{
+  margin-bottom:15px;
+  padding:10px;
+  border-radius:10px;
+  border-left:4px solid #ef4444;
+  background:#020617;
+  font-family:"Amiri",serif;
 }
 </style>
 </head>
@@ -73,7 +136,11 @@ h1{text-align:center;margin-bottom:15px}
 <body>
 
 <div class="quiz-box">
-<h1>Kuis Nahwu</h1>
+
+<div class="score-board" id="scoreBoard">
+Skor: 0 / 100<br>
+Benar: 0 | Salah: 0
+</div>
 
 <div id="quiz">
   <div id="questionText"></div>
@@ -88,98 +155,101 @@ h1{text-align:center;margin-bottom:15px}
   <div class="feedback" id="feedbackText"></div>
   <div class="wrong-list" id="wrongList"></div>
 </div>
+
 </div>
 
 <script>
-const POINT = 5;
-let questions=[], shuffled=[], index=0;
-let score=0, correctCount=0;
-let wrongAnswers=[];
+const POINT=5;
+let data=[],idx=0,score=0,correct=0,wrongCount=0,wrong=[];
 
 fetch("soal.json")
 .then(r=>r.json())
-.then(data=>{
-  questions=data;
-  shuffled=questions.sort(()=>Math.random()-0.5);
-  render();
+.then(d=>{
+  data=d.sort(()=>Math.random()-0.5);
+  show();
 });
 
-function render(){
-  if(index>=shuffled.length){showResult();return;}
-  let q=shuffled[index];
+function updateScore(){
+  scoreBoard.innerHTML=
+  `Skor: ${score} / 100<br>
+   Benar: ${correct} | Salah: ${wrongCount}`;
+}
 
-  document.getElementById("questionText").innerText=
-    `Soal ${index+1}: ${q.question}`;
-
+function show(){
+  if(idx>=data.length){finish();return;}
+  let q=data[idx];
+  questionText.innerText=`Soal ${idx+1}: ${q.question}`;
+  answers.innerHTML="";
   let opts=[q.option_A,q.option_B,q.option_C,q.option_D,q.option_E];
-  let box=document.getElementById("answers");
-  box.innerHTML="";
 
   opts.forEach((t,i)=>{
     let b=document.createElement("button");
     b.textContent=t;
-    b.onclick=()=>check(i);
-    box.appendChild(b);
+    b.onclick=()=>check(b,i);
+    answers.appendChild(b);
   });
 
-  document.getElementById("result").classList.add("hidden");
-  document.getElementById("nextBtn").classList.add("hidden");
+  result.classList.add("hidden");
+  nextBtn.classList.add("hidden");
 }
 
-function check(sel){
-  let q=shuffled[index];
+function check(btn,i){
+  let q=data[idx];
   let cor=Number(q.answer_index);
-  let r=document.getElementById("result");
-  r.classList.remove("hidden");
+  let buttons=[...document.querySelectorAll(".answer-buttons button")];
 
-  if(sel===cor){
-    score+=POINT;
-    correctCount++;
-    r.innerHTML=`<div class="correct">Jawaban Benar</div>
-                 <div class="explain">${q.explanation}</div>`;
+  buttons.forEach((b,n)=>{
+    if(n===cor)b.classList.add("correct");
+    if(n===i && i!==cor)b.classList.add("wrong");
+    b.disabled=true;
+  });
+
+  result.classList.remove("hidden");
+
+  if(i===cor){
+    correct++; score+=POINT;
+    result.innerHTML=
+    `<div class="correct-text">✔ Jawaban Benar</div>
+     <div class="explain">${q.explanation}</div>`;
   }else{
-    wrongAnswers.push({
-      question:q.question,
-      correct:q["option_"+String.fromCharCode(65+cor)],
-      explanation:q.explanation
+    wrongCount++;
+    wrong.push({
+      q:q.question,
+      c:q["option_"+String.fromCharCode(65+cor)],
+      e:q.explanation
     });
-    r.innerHTML=`<div class="wrong">Jawaban Salah</div>
-                 <div class="explain">${q.explanation}</div>`;
+    result.innerHTML=`<div class="wrong-text">✖ Jawaban Salah</div>`;
   }
 
-  document.querySelectorAll(".answer-buttons button")
-    .forEach(b=>b.disabled=true);
-  document.getElementById("nextBtn").classList.remove("hidden");
+  updateScore();
+  nextBtn.classList.remove("hidden");
 }
 
-nextBtn.onclick=()=>{index++;render();};
+nextBtn.onclick=()=>{idx++;show();};
 
-function showResult(){
+function finish(){
   quiz.classList.add("hidden");
   finalResult.classList.remove("hidden");
 
-  scoreText.innerHTML=`
-    Benar: ${correctCount}<br>
-    Skor: <b>${score}</b> / ${shuffled.length*POINT}
-  `;
+  scoreText.innerHTML=`Benar: <b>${correct}</b><br>Skor Akhir: <b>${score}</b>`;
 
-  let fb="";
-  if(correctCount<=5) fb="❌ Wawasan nahwu kamu kurang, belajar lagi ya dek";
-  else if(correctCount<=10) fb="⚠️ Sudah ada dasar, tapi masih perlu banyak latihan";
-  else if(correctCount<=15) fb="👍 Pemahamanmu cukup baik, teruskan belajar";
-  else fb="🌟 Luar biasa! Wawasan nahwu kamu sangat bagus";
+  let msg="";
+  if(correct<=5) msg="❌ Wawasan nahwu kamu kurang, belajar lagi ya dek";
+  else if(correct<=10) msg="⚠️ Sudah ada dasar, tapi masih perlu banyak latihan";
+  else if(correct<=15) msg="👍 Pemahamanmu cukup baik, teruskan belajar";
+  else msg="🌟 Luar biasa! Wawasan nahwu kamu sangat bagus";
 
-  feedbackText.innerText=fb;
+  feedbackText.innerText=msg;
 
-  if(wrongAnswers.length){
+  if(wrong.length){
     wrongList.innerHTML="<h3>Soal yang Salah</h3>";
-    wrongAnswers.forEach((w,i)=>{
+    wrong.forEach((w,i)=>{
       wrongList.innerHTML+=`
-        <div class="wrong-item">
-          <b>${i+1}. ${w.question}</b><br>
-          Jawaban benar: ${w.correct}<br>
-          <small>${w.explanation}</small>
-        </div>`;
+      <div class="wrong-item">
+        <b>${i+1}. ${w.q}</b><br>
+        Jawaban benar: ${w.c}<br>
+        ${w.e}
+      </div>`;
     });
   }else{
     wrongList.innerHTML="<b>Semua jawaban benar 🎉</b>";
