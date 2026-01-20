@@ -21,7 +21,7 @@ body{
   text-align:center;
 }
 
-/* ====== CONTAINER ====== */
+/* ===== CONTAINER ===== */
 .quiz-box{
   width:100%;
   max-width:720px;
@@ -30,10 +30,10 @@ body{
   border-radius:22px;
   padding:25px;
   box-shadow:0 0 40px rgba(0,0,0,.6);
-  animation:fadeIn .6s ease;
+  overflow:hidden;
 }
 
-/* ====== SCORE ====== */
+/* ===== SCORE ===== */
 .score-board{
   margin-bottom:15px;
   padding:12px;
@@ -43,20 +43,31 @@ body{
   font-size:1rem;
 }
 
-/* ====== QUESTION ====== */
+/* ===== TRANSITION WRAPPER ===== */
+#quiz{
+  transition:.45s ease;
+}
+.fade-out{
+  opacity:0;
+  transform:translateY(-10px);
+}
+.fade-in{
+  opacity:1;
+  transform:translateY(0);
+}
+
+/* ===== QUESTION ===== */
 #questionText{
   font-family:"Amiri",serif;
   font-size:1.45rem;
   margin:22px 0;
-  animation:slideUp .4s ease;
 }
 
-/* ====== ANSWERS ====== */
+/* ===== ANSWERS ===== */
 .answer-buttons{
   display:grid;
   gap:14px;
 }
-
 .answer-buttons button{
   padding:14px;
   background:#020617;
@@ -65,47 +76,57 @@ body{
   color:#e5e7eb;
   font-size:1.2rem;
   cursor:pointer;
-  transition:all .25s ease;
-  font-family:"Amiri",serif; /* FIX UTAMA */
+  transition:.25s ease;
+  font-family:"Amiri",serif;
 }
-
 .answer-buttons button:hover{
   background:#1e293b;
-  transform:translateY(-2px);
 }
 
+/* focus state */
+.answer-buttons.focus button:not(.chosen){
+  opacity:.45;
+}
+
+/* correct */
 .answer-buttons button.correct{
-  background:#052e1a;
   border-color:#22c55e;
   color:#22c55e;
-  animation:pulse .4s ease;
+  box-shadow:0 0 10px rgba(34,197,94,.45);
+  animation:pulseOnce .4s ease;
 }
 
+/* wrong */
 .answer-buttons button.wrong{
   background:#3f0d0d;
   border-color:#ef4444;
   color:#ef4444;
-  animation:shake .3s ease;
+  animation:microShake .25s ease;
 }
 
-.answer-buttons button:disabled{
-  cursor:not-allowed;
-  opacity:.9;
+@keyframes pulseOnce{
+  0%{transform:scale(1)}
+  50%{transform:scale(1.035)}
+  100%{transform:scale(1)}
+}
+@keyframes microShake{
+  0%{transform:translateX(0)}
+  40%{transform:translateX(-3px)}
+  80%{transform:translateX(3px)}
+  100%{transform:translateX(0)}
 }
 
-/* ====== RESULT ====== */
+/* ===== RESULT ===== */
 #result{
   margin-top:18px;
   padding:15px;
   border-radius:16px;
   border:1px solid #334155;
-  animation:fadeIn .3s ease;
 }
-
 .correct-text{color:#22c55e;font-weight:bold}
 .wrong-text{color:#ef4444;font-weight:bold}
 
-/* ====== EXPLANATION ====== */
+/* explanation hierarchy */
 .explain{
   margin-top:10px;
   font-family:"Amiri",serif;
@@ -115,9 +136,16 @@ body{
   border-radius:12px;
   border-left:4px solid #38bdf8;
   line-height:1.7;
+  opacity:0;
+  animation:fadeExplain .4s ease forwards;
+  animation-delay:.2s;
+}
+@keyframes fadeExplain{
+  from{opacity:0;transform:translateY(6px)}
+  to{opacity:1;transform:translateY(0)}
 }
 
-/* ====== BUTTON ====== */
+/* ===== BUTTON ===== */
 #nextBtn{
   margin-top:22px;
   width:100%;
@@ -126,30 +154,30 @@ body{
   border-radius:16px;
   background:#2563eb;
   color:white;
-  font-size:1rem;
   cursor:pointer;
   transition:.25s;
 }
+#nextBtn:hover{background:#1d4ed8}
 
-#nextBtn:hover{
-  background:#1d4ed8;
-  transform:translateY(-1px);
-}
-
-/* ====== FINAL ====== */
 .hidden{display:none}
 
+/* ===== FINAL ===== */
+#finalResult{
+  opacity:0;
+  transform:scale(.96);
+  transition:.5s ease;
+}
+#finalResult.show{
+  opacity:1;
+  transform:scale(1);
+}
 .feedback{
   margin-top:15px;
   padding:12px;
   border-radius:14px;
   border:1px solid #334155;
 }
-
-.wrong-list{
-  margin-top:20px;
-  text-align:left;
-}
+.wrong-list{text-align:left;margin-top:20px}
 .wrong-item{
   margin-bottom:15px;
   padding:12px;
@@ -157,27 +185,6 @@ body{
   border-left:4px solid #ef4444;
   background:#020617;
   font-family:"Amiri",serif;
-}
-
-/* ====== ANIMATIONS ====== */
-@keyframes fadeIn{
-  from{opacity:0}
-  to{opacity:1}
-}
-@keyframes slideUp{
-  from{opacity:0;transform:translateY(10px)}
-  to{opacity:1;transform:translateY(0)}
-}
-@keyframes pulse{
-  0%{transform:scale(1)}
-  50%{transform:scale(1.04)}
-  100%{transform:scale(1)}
-}
-@keyframes shake{
-  0%{transform:translateX(0)}
-  30%{transform:translateX(-4px)}
-  60%{transform:translateX(4px)}
-  100%{transform:translateX(0)}
 }
 </style>
 </head>
@@ -187,11 +194,11 @@ body{
 <div class="quiz-box">
 
 <div class="score-board" id="scoreBoard">
-Skor: 0 / 100<br>
-Benar: 0 | Salah: 0
+Skor: <span id="scoreNum">0</span> / 100<br>
+Benar: <span id="cNum">0</span> | Salah: <span id="wNum">0</span>
 </div>
 
-<div id="quiz">
+<div id="quiz" class="fade-in">
   <div id="questionText"></div>
   <div id="answers" class="answer-buttons"></div>
   <div id="result" class="hidden"></div>
@@ -211,41 +218,58 @@ Benar: 0 | Salah: 0
 const POINT=5;
 let data=[],idx=0,score=0,correct=0,wrongCount=0,wrong=[];
 
-fetch("soal.json")
-.then(r=>r.json())
-.then(d=>{
+fetch("soal.json").then(r=>r.json()).then(d=>{
   data=d.sort(()=>Math.random()-0.5);
   show();
 });
 
+function animateNumber(el,from,to){
+  let cur=from;
+  let step=(to-from)/15;
+  let i=setInterval(()=>{
+    cur+=step;
+    el.textContent=Math.round(cur);
+    if((step>0 && cur>=to)||(step<0 && cur<=to)){
+      el.textContent=to;
+      clearInterval(i);
+    }
+  },20);
+}
+
 function updateScore(){
-  scoreBoard.innerHTML=
-  `Skor: ${score} / 100<br>
-   Benar: ${correct} | Salah: ${wrongCount}`;
+  animateNumber(scoreNum,Number(scoreNum.textContent),score);
+  cNum.textContent=correct;
+  wNum.textContent=wrongCount;
 }
 
 function show(){
-  if(idx>=data.length){finish();return;}
-  let q=data[idx];
-  questionText.innerText=`Soal ${idx+1}: ${q.question}`;
-  answers.innerHTML="";
-  let opts=[q.option_A,q.option_B,q.option_C,q.option_D,q.option_E];
+  quiz.classList.add("fade-out");
+  setTimeout(()=>{
+    quiz.classList.remove("fade-out");
+    quiz.classList.add("fade-in");
 
-  opts.forEach((t,i)=>{
-    let b=document.createElement("button");
-    b.textContent=t;
-    b.onclick=()=>check(b,i);
-    answers.appendChild(b);
-  });
+    let q=data[idx];
+    questionText.innerText=`Soal ${idx+1}: ${q.question}`;
+    answers.innerHTML="";
+    ["A","B","C","D","E"].forEach((l,i)=>{
+      let b=document.createElement("button");
+      b.textContent=q["option_"+l];
+      b.onclick=()=>check(b,i);
+      answers.appendChild(b);
+    });
 
-  result.classList.add("hidden");
-  nextBtn.classList.add("hidden");
+    result.classList.add("hidden");
+    nextBtn.classList.add("hidden");
+    answers.classList.remove("focus");
+  },300);
 }
 
 function check(btn,i){
   let q=data[idx];
   let cor=Number(q.answer_index);
-  let buttons=[...document.querySelectorAll(".answer-buttons button")];
+  let buttons=[...answers.children];
+  answers.classList.add("focus");
+  btn.classList.add("chosen");
 
   buttons.forEach((b,n)=>{
     if(n===cor)b.classList.add("correct");
@@ -257,9 +281,8 @@ function check(btn,i){
 
   if(i===cor){
     correct++; score+=POINT;
-    result.innerHTML=
-    `<div class="correct-text">✔ Jawaban Benar</div>
-     <div class="explain">${q.explanation}</div>`;
+    result.innerHTML=`<div class="correct-text">✔ Jawaban Benar</div>
+    <div class="explain">${q.explanation}</div>`;
   }else{
     wrongCount++;
     wrong.push({
@@ -274,35 +297,37 @@ function check(btn,i){
   nextBtn.classList.remove("hidden");
 }
 
-nextBtn.onclick=()=>{idx++;show();};
+nextBtn.onclick=()=>{idx++; idx<data.length?show():finish();};
 
 function finish(){
-  quiz.classList.add("hidden");
-  finalResult.classList.remove("hidden");
+  quiz.classList.add("fade-out");
+  setTimeout(()=>{
+    quiz.classList.add("hidden");
+    finalResult.classList.remove("hidden");
+    finalResult.classList.add("show");
 
-  scoreText.innerHTML=`Benar: <b>${correct}</b><br>Skor Akhir: <b>${score}</b>`;
+    scoreText.innerHTML=`Benar: <b>${correct}</b><br>Skor Akhir: <b>${score}</b>`;
 
-  let msg="";
-  if(correct<=5) msg="❌ Wawasan nahwu kamu kurang, belajar lagi ya dek";
-  else if(correct<=10) msg="⚠️ Sudah ada dasar, tapi masih perlu banyak latihan";
-  else if(correct<=15) msg="👍 Pemahamanmu cukup baik, teruskan belajar";
-  else msg="🌟 Luar biasa! Wawasan nahwu kamu sangat bagus";
+    let msg=
+      correct<=5?"❌ Wawasan nahwu kamu kurang":
+      correct<=10?"⚠️ Sudah ada dasar":
+      correct<=15?"👍 Pemahaman cukup baik":
+      "🌟 Luar biasa!";
+    feedbackText.innerText=msg;
 
-  feedbackText.innerText=msg;
-
-  if(wrong.length){
-    wrongList.innerHTML="<h3>Soal yang Salah</h3>";
-    wrong.forEach((w,i)=>{
-      wrongList.innerHTML+=`
-      <div class="wrong-item">
-        <b>${i+1}. ${w.q}</b><br>
-        Jawaban benar: ${w.c}<br>
-        ${w.e}
-      </div>`;
-    });
-  }else{
-    wrongList.innerHTML="<b>Semua jawaban benar 🎉</b>";
-  }
+    if(wrong.length){
+      wrongList.innerHTML="<h3>Soal yang Salah</h3>";
+      wrong.forEach((w,i)=>{
+        wrongList.innerHTML+=`
+        <div class="wrong-item">
+          <b>${i+1}. ${w.q}</b><br>
+          Jawaban benar: ${w.c}<br>${w.e}
+        </div>`;
+      });
+    }else{
+      wrongList.innerHTML="<b>Semua jawaban benar 🎉</b>";
+    }
+  },400);
 }
 </script>
 
