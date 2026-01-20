@@ -30,7 +30,7 @@ body{
   box-shadow:0 0 40px rgba(0,0,0,.6);
 }
 
-/* ===== ANIMASI SOAL ===== */
+/* ===== TRANSISI SOAL ===== */
 .question-wrap{
   transition:.45s ease;
 }
@@ -134,7 +134,14 @@ body{
   transform:scale(1);
 }
 
-/* ===== REKAP ===== */
+.feedback{
+  margin-top:15px;
+  padding:12px;
+  border-radius:14px;
+  border:1px solid #334155;
+}
+
+/* ===== REKAP SALAH ===== */
 .wrong-item{
   margin-top:16px;
   padding:14px;
@@ -142,6 +149,7 @@ body{
   background:#020617;
   border:1px solid #334155;
 }
+.wrong-item h4{margin:0 0 8px;font-weight:normal}
 .bad{color:#ef4444}
 .good{color:#22c55e}
 .explain-box{
@@ -153,6 +161,7 @@ body{
   font-family:"Amiri",serif;
 }
 
+/* ===== ACTION ===== */
 .action-box{
   margin-top:25px;
   display:grid;
@@ -194,9 +203,18 @@ body{
 <div id="finalResult" class="hidden">
   <h2>Hasil Akhir</h2>
   <div id="scoreText"></div>
-  <div id="feedbackText"></div>
+  <div class="feedback" id="feedbackText"></div>
+
   <h3>📌 Rekap Jawaban Salah</h3>
   <div id="wrongList"></div>
+
+  <div class="action-box">
+    <button class="wa" onclick="shareWA()">📱 Share Story WhatsApp</button>
+    <button class="ig" onclick="shareIG()">📸 Share Story Instagram</button>
+    <button class="fb" onclick="shareFB()">📘 Share Facebook</button>
+    <button class="yt" onclick="goYouTube()">▶️ YouTube</button>
+    <button class="gg" onclick="goGoogle()">🌐 Google</button>
+  </div>
 </div>
 
 </div>
@@ -205,16 +223,43 @@ body{
 const POINT=5;
 let data=[],idx=0,score=0,correct=0,wrongCount=0,wrong=[];
 
-const qWrap=document.getElementById("qWrap");
+const scoreNum=document.getElementById("scoreNum");
+const cNum=document.getElementById("cNum");
+const wNum=document.getElementById("wNum");
 const questionText=document.getElementById("questionText");
 const answers=document.getElementById("answers");
-const nextBtn=document.getElementById("nextBtn");
 const result=document.getElementById("result");
+const nextBtn=document.getElementById("nextBtn");
+const quiz=document.getElementById("quiz");
+const finalResult=document.getElementById("finalResult");
+const scoreText=document.getElementById("scoreText");
+const feedbackText=document.getElementById("feedbackText");
+const wrongList=document.getElementById("wrongList");
+const qWrap=document.getElementById("qWrap");
 
 fetch("soal.json").then(r=>r.json()).then(d=>{
   data=d.sort(()=>Math.random()-0.5);
   show();
 });
+
+function animateNumber(el,from,to){
+  el.classList.add("score-pop");
+  let cur=from,step=(to-from)/15;
+  let i=setInterval(()=>{
+    cur+=step;
+    el.textContent=Math.round(cur);
+    if(cur>=to){
+      el.textContent=to;
+      clearInterval(i);
+      setTimeout(()=>el.classList.remove("score-pop"),300);
+    }
+  },20);
+}
+function updateScore(){
+  animateNumber(scoreNum,Number(scoreNum.textContent),score);
+  cNum.textContent=correct;
+  wNum.textContent=wrongCount;
+}
 
 function show(){
   qWrap.classList.add("hide");
@@ -238,21 +283,83 @@ function show(){
 function check(btn,i){
   let q=data[idx];
   let cor=Number(q.answer_index);
-  [...answers.children].forEach((b,n)=>{
+  let buttons=[...answers.children];
+
+  buttons.forEach((b,n)=>{
     if(n===cor)b.classList.add("correct");
     if(n===i && i!==cor)b.classList.add("wrong");
     b.disabled=true;
   });
+
   result.classList.remove("hidden");
+
+  if(i===cor){
+    correct++; score+=POINT;
+    result.innerHTML=`<div class="correct-text">✔ Jawaban Benar</div>
+    <div class="explain">${q.explanation}</div>`;
+  }else{
+    wrongCount++;
+    wrong.push({
+      q:q.question,
+      wrong:q["option_"+String.fromCharCode(65+i)],
+      correct:q["option_"+String.fromCharCode(65+cor)],
+      exp:q.explanation
+    });
+    result.innerHTML=`<div class="wrong-text">✖ Jawaban Salah</div>`;
+  }
+
+  updateScore();
   nextBtn.classList.remove("hidden");
-  if(i===cor){correct++;score+=POINT;}
-  else{wrongCount++;}
 }
 
 nextBtn.onclick=()=>{
   idx++;
   if(idx<data.length) show();
+  else finish();
 };
+
+function finish(){
+  quiz.classList.add("hidden");
+  finalResult.classList.remove("hidden");
+  finalResult.classList.add("show");
+
+  scoreText.innerHTML=`Benar: <b>${correct}</b><br>Skor Akhir: <b>${score}</b>`;
+  feedbackText.innerText=
+    correct<=5?"❌ Wawasan nahwu kamu kurang":
+    correct<=10?"⚠️ Sudah ada dasar":
+    correct<=15?"👍 Pemahaman cukup baik":"🌟 Luar biasa!";
+
+  if(wrong.length===0){
+    wrongList.innerHTML="<p>🎉 Tidak ada jawaban salah</p>";
+  }else{
+    wrong.forEach((w,i)=>{
+      wrongList.innerHTML+=`
+      <div class="wrong-item">
+        <h4>${i+1}. ${w.q}</h4>
+        <div class="bad">❌ Jawaban kamu: ${w.wrong}</div>
+        <div class="good">✅ Jawaban benar: ${w.correct}</div>
+        <div class="explain-box">${w.exp}</div>
+      </div>`;
+    });
+  }
+}
+
+/* ===== ACTION ===== */
+const shareText=()=>`Aku baru saja mengerjakan Kuis Nahwu 📝
+Skor: ${score}/100
+Benar: ${correct}, Salah: ${wrongCount}`;
+
+function shareWA(){
+  window.open(`https://wa.me/?text=${encodeURIComponent(shareText())}`,'_blank');
+}
+function shareIG(){
+  navigator.share({title:"Kuis Nahwu",text:shareText(),url:location.href});
+}
+function shareFB(){
+  window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(location.href)}`,'_blank');
+}
+function goYouTube(){location.href="https://www.youtube.com"}
+function goGoogle(){location.href="https://www.google.com"}
 </script>
 </body>
 </html>
