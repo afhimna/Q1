@@ -56,7 +56,6 @@ body{
   font-family:"Amiri",serif;
 }
 .answer-buttons button:hover{background:#1e293b}
-
 .answer-buttons.focus button:not(.chosen){opacity:.45}
 .answer-buttons button.correct{
   border-color:#22c55e;
@@ -69,7 +68,7 @@ body{
   color:#ef4444;
 }
 
-/* ===== SCORE (DIPINDAH KE BAWAH JAWABAN) ===== */
+/* ===== SCORE ===== */
 .score-board{
   margin-top:20px;
   padding:14px;
@@ -77,11 +76,8 @@ body{
   background:#020617;
   border:1px solid #334155;
   text-align:center;
-  font-size:1rem;
 }
-.score-pop{
-  animation:scorePop .4s ease;
-}
+.score-pop{animation:scorePop .4s ease}
 @keyframes scorePop{
   0%{transform:scale(1)}
   50%{transform:scale(1.15)}
@@ -97,7 +93,6 @@ body{
 }
 .correct-text{color:#22c55e;font-weight:bold}
 .wrong-text{color:#ef4444;font-weight:bold}
-
 .explain{
   margin-top:10px;
   font-family:"Amiri",serif;
@@ -123,7 +118,7 @@ body{
 
 .hidden{display:none}
 
-/* ===== FINAL RESULT ===== */
+/* ===== FINAL ===== */
 #finalResult{
   opacity:0;
   transform:scale(.96);
@@ -139,15 +134,22 @@ body{
   border-radius:14px;
   border:1px solid #334155;
 }
-.wrong-list{text-align:left;margin-top:20px}
-.wrong-item{
-  margin-bottom:15px;
-  padding:12px;
-  border-radius:12px;
-  border-left:4px solid #ef4444;
-  background:#020617;
-  font-family:"Amiri",serif;
+
+/* ===== SHARE BUTTONS ===== */
+.action-box{
+  margin-top:25px;
+  display:grid;
+  gap:12px;
 }
+.action-box button{
+  padding:14px;
+  border:none;
+  border-radius:16px;
+  cursor:pointer;
+  font-size:1rem;
+}
+.home-btn{background:#334155;color:white}
+.share-btn{background:#16a34a;color:white}
 </style>
 </head>
 
@@ -158,7 +160,6 @@ body{
     <div id="questionText"></div>
     <div id="answers" class="answer-buttons"></div>
 
-    <!-- SCORE DIPINDAH KE SINI -->
     <div class="score-board">
       Skor: <b id="scoreNum">0</b> / 100<br>
       Benar: <span id="cNum">0</span> | Salah: <span id="wNum">0</span>
@@ -172,7 +173,13 @@ body{
     <h2>Hasil Akhir</h2>
     <div id="scoreText"></div>
     <div class="feedback" id="feedbackText"></div>
-    <div class="wrong-list" id="wrongList"></div>
+    <div id="wrongList"></div>
+
+    <!-- BUTTON BARU -->
+    <div class="action-box">
+      <button class="home-btn" onclick="goHome()">🏠 Kembali ke Halaman Utama</button>
+      <button class="share-btn" onclick="shareScore()">📤 Share ke Story FB / WA / IG</button>
+    </div>
   </div>
 
 </div>
@@ -181,7 +188,6 @@ body{
 const POINT=5;
 let data=[],idx=0,score=0,correct=0,wrongCount=0,wrong=[];
 
-/* ===== DOM BINDING FIX ===== */
 const scoreNum=document.getElementById("scoreNum");
 const cNum=document.getElementById("cNum");
 const wNum=document.getElementById("wNum");
@@ -202,8 +208,7 @@ fetch("soal.json").then(r=>r.json()).then(d=>{
 
 function animateNumber(el,from,to){
   el.classList.add("score-pop");
-  let cur=from;
-  let step=(to-from)/15;
+  let cur=from,step=(to-from)/15;
   let i=setInterval(()=>{
     cur+=step;
     el.textContent=Math.round(cur);
@@ -214,7 +219,6 @@ function animateNumber(el,from,to){
     }
   },20);
 }
-
 function updateScore(){
   animateNumber(scoreNum,Number(scoreNum.textContent),score);
   cNum.textContent=correct;
@@ -282,18 +286,26 @@ function finish(){
     correct<=5?"❌ Wawasan nahwu kamu kurang":
     correct<=10?"⚠️ Sudah ada dasar":
     correct<=15?"👍 Pemahaman cukup baik":"🌟 Luar biasa!";
+}
 
-  if(wrong.length){
-    wrongList.innerHTML="<h3>Soal yang Salah</h3>";
-    wrong.forEach((w,i)=>{
-      wrongList.innerHTML+=`
-      <div class="wrong-item">
-        <b>${i+1}. ${w.q}</b><br>
-        Jawaban benar: ${w.c}<br>${w.e}
-      </div>`;
+/* ===== BUTTON ACTION ===== */
+function goHome(){
+  window.location.href="https://www.google.com";
+}
+
+function shareScore(){
+  const text=`Aku baru saja mengerjakan Kuis Nahwu 📝
+Skor: ${score}/100
+Benar: ${correct}, Salah: ${wrongCount}`;
+
+  if(navigator.share){
+    navigator.share({
+      title:"Hasil Kuis Nahwu",
+      text:text,
+      url:location.href
     });
   }else{
-    wrongList.innerHTML="<b>Semua jawaban benar 🎉</b>";
+    alert("Browser tidak mendukung share otomatis");
   }
 }
 </script>
