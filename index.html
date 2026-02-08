@@ -51,9 +51,11 @@ body{
 #progressBar{
   height:100%;
   width:100%;
-  background:linear-gradient(90deg,#22c55e,#eab308,#ef4444);
   transition:width .3s linear;
 }
+.progress-safe{ background:#ef4444; }   /* hijau */
+.progress-warn{ background:#eab308; }   /* kuning */
+.progress-danger{ background:#22c55e; } /* merah */
 #timerBox.danger{color:#ef4444}
 
 #questionText{
@@ -140,6 +142,17 @@ body{
   50%{background:#3f0d0d}
   100%{background:#020617}
 }
+/* ===== TRANSISI SOAL ===== */
+.fade-enter{
+  opacity:0;
+  transform:translateY(12px);
+}
+
+.fade-enter-active{
+  opacity:1;
+  transform:translateY(0);
+  transition:opacity .4s ease, transform .4s ease;
+}
 </style>
 </head>
 
@@ -219,7 +232,24 @@ function startTimer(){
 
     remaining--;
     timeNum.textContent = remaining;
-    progressBar.style.width = (remaining/(TIME_LIMIT/1000))*100+"%";
+    progressBar.style.width =
+  (remaining / (TIME_LIMIT/1000)) * 100 + "%";
+
+/* RESET kelas warna */
+progressBar.classList.remove(
+  "progress-safe",
+  "progress-warn",
+  "progress-danger"
+);
+
+/* ATUR warna berdasarkan sisa waktu */
+if(remaining > 10){
+  progressBar.classList.add("progress-safe");
+}else if(remaining > 5){
+  progressBar.classList.add("progress-warn");
+}else{
+  progressBar.classList.add("progress-danger");
+}
 
     tickSound.currentTime=0;
     tickSound.play();
@@ -245,23 +275,31 @@ function pauseTimer(){
 
 /* ===== LOGIKA ASLI TIDAK DIUBAH ===== */
 function show(){
-  const q=data[idx];
-  questionText.innerText=`Soal ${idx+1}: ${q.question}`;
-  answers.innerHTML="";
-  currentOptions=["A","B","C","D","E"].map((l,i)=>({
-    text:q["option_"+l],
-    isCorrect:i===Number(q.answer_index)
+  const q = data[idx];
+  questionText.innerText = `Soal ${idx+1}: ${q.question}`;
+  answers.innerHTML = "";
+
+  currentOptions = ["A","B","C","D","E"].map((l,i)=>({
+    text: q["option_"+l],
+    isCorrect: i === Number(q.answer_index)
   }));
-  currentOptions.sort(()=>Math.random()-.5);
+
+  shuffle(currentOptions);
+
   currentOptions.forEach(opt=>{
-    const b=document.createElement("button");
-    b.textContent=opt.text;
-    b.onclick=()=>check(b,opt);
+    const b = document.createElement("button");
+    b.textContent = opt.text;
+    b.onclick = ()=>check(b, opt);
     answers.appendChild(b);
   });
+
   result.classList.add("hidden");
   nextBtn.classList.add("hidden");
+
   startTimer();
+
+  /* ⬇️ TAMBAHAN INI */
+  animateQuestion();
 }
 
 function check(btn,opt){
@@ -280,10 +318,13 @@ function check(btn,opt){
   if(opt.isCorrect){
     correct++;score+=POINT;
     result.innerHTML=`<div class="correct-text">✔ Jawaban Benar</div><div class="explain">${q.explanation}</div>`;
-  }else{
-    wrongCount++;
-    result.innerHTML=`<div class="wrong-text">✖ Jawaban Salah</div>`;
-  }
+}else{
+  wrongCount++;
+  result.innerHTML = `
+    <div class="wrong-text">✖ Jawaban Salah</div>
+    <div class="explain">${q.explanation}</div>
+  `;
+}
   scoreNum.textContent=score;
   cNum.textContent=correct;
   wNum.textContent=wrongCount;
