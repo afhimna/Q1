@@ -169,6 +169,18 @@ body{
 .fb{background:#1877f2}
 .yt{background:#dc2626}
 .gg{background:#334155}
+
+/* ===== TIMER PANIC (5 DETIK TERAKHIR) ===== */
+.timer-warning{
+  animation:pulseRed 1s infinite;
+  box-shadow:0 0 25px rgba(239,68,68,.6);
+  border-color:#ef4444 !important;
+}
+@keyframes pulseRed{
+  0%{background:#020617}
+  50%{background:#3f0d0d}
+  100%{background:#020617}
+}
 </style>
 </head>
 
@@ -207,8 +219,12 @@ body{
 
 <script>
 const POINT = 5;
+const TIME_LIMIT = 20000;
+
 let data = [], idx = 0, score = 0, correct = 0, wrongCount = 0, wrong = [];
 let currentOptions = [];
+let timer = null;
+let timerActive = false;
 
 const scoreNum = document.getElementById("scoreNum");
 const cNum = document.getElementById("cNum");
@@ -222,11 +238,12 @@ const finalResult = document.getElementById("finalResult");
 const scoreText = document.getElementById("scoreText");
 const feedbackText = document.getElementById("feedbackText");
 const wrongList = document.getElementById("wrongList");
+const quizBox = document.querySelector(".quiz-box");
 
 fetch("soal.json")
   .then(r => r.json())
   .then(d => {
-    data = d; // SOAL TETAP URUT
+    data = d;
     show();
   });
 
@@ -257,18 +274,62 @@ function updateScore(){
   wNum.textContent = wrongCount;
 }
 
+/* ===== TIMER ===== */
+function startTimer(){
+  clearTimeout(timer);
+  timerActive = true;
+  quizBox.classList.remove("timer-warning");
+
+  setTimeout(()=>{
+    if(timerActive) quizBox.classList.add("timer-warning");
+  }, TIME_LIMIT - 5000);
+
+  timer = setTimeout(()=>{
+    if(timerActive) timeUp();
+  }, TIME_LIMIT);
+}
+
+function timeUp(){
+  timerActive = false;
+  quizBox.classList.remove("timer-warning");
+  wrongCount++;
+
+  const q = data[idx];
+  const buttons = [...answers.children];
+  const correctOpt = currentOptions.find(o=>o.isCorrect);
+
+  buttons.forEach((b,i)=>{
+    if(currentOptions[i].isCorrect) b.classList.add("correct");
+    b.disabled = true;
+  });
+
+  wrong.push({
+    q: q.question,
+    wrong: "⏰ Tidak dijawab",
+    correct: correctOpt.text,
+    exp: q.explanation
+  });
+
+  result.classList.remove("hidden");
+  result.innerHTML = `
+    <div class="wrong-text">⏰ Waktu habis</div>
+    <div class="explain">${q.explanation}</div>
+  `;
+
+  updateScore();
+  nextBtn.classList.remove("hidden");
+}
+
 function show(){
   const q = data[idx];
   questionText.innerText = `Soal ${idx+1}: ${q.question}`;
   answers.innerHTML = "";
 
-  // Bangun opsi + tandai jawaban benar
   currentOptions = ["A","B","C","D","E"].map((l,i)=>({
     text: q["option_"+l],
     isCorrect: i === Number(q.answer_index)
   }));
 
-  // Acak OPSI
   shuffle(currentOptions);
 
   currentOptions.forEach(opt=>{
@@ -280,9 +341,16 @@ function show(){
 
   result.classList.add("hidden");
   nextBtn.classList.add("hidden");
+
+  startTimer();
 }
 
 function check(btn, opt){
+  if(!timerActive) return;
+  timerActive = false;
+  clearTimeout(timer);
+  quizBox.classList.remove("timer-warning");
+
   const q = data[idx];
   const buttons = [...answers.children];
 
@@ -317,6 +385,8 @@ function check(btn, opt){
 }
 
 nextBtn.onclick = ()=>{
+  clearTimeout(timer);
+  quizBox.classList.remove("timer-warning");
   idx++;
   if(idx < data.length) show();
   else finish();
