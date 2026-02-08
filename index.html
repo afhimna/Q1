@@ -243,6 +243,13 @@ body.page-ready{
 #quiz.hidden{
   display:none;
 }
+#timerBox{
+  opacity:0;
+  transition:.4s ease;
+}
+#timerBox:not(.hidden){
+  opacity:1;
+}
 </style>
 </head>
 
@@ -307,10 +314,14 @@ const nextBtn = document.getElementById("nextBtn");
 const quizBox = document.querySelector(".quiz-box");
 const startScreen = document.getElementById("startScreen");
 const startBtn = document.getElementById("startBtn");
+const timerBox = document.getElementById("timerBox");
+timerBox.classList.add("hidden");
 
 startBtn.onclick = ()=>{
   startScreen.classList.add("hidden");
   quiz.classList.remove("hidden");
+
+  timerBox.classList.remove("hidden");
 
   idx = 0;
   show();
