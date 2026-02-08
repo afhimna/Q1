@@ -221,6 +221,28 @@ body.page-ready{
   from{opacity:0}
   to{opacity:1}
 }
+#startScreen{
+  text-align:center;
+  animation:fadeText .6s ease;
+}
+
+#startBtn{
+  padding:14px 26px;
+  font-size:1.1rem;
+  border:none;
+  border-radius:16px;
+  background:#22c55e;
+  color:#020617;
+  cursor:pointer;
+  transition:.3s ease;
+}
+#startBtn:hover{
+  background:#16a34a;
+}
+
+#quiz.hidden{
+  display:none;
+}
 </style>
 </head>
 
@@ -231,8 +253,15 @@ body.page-ready{
     ⏳ Waktu: <span id="timeNum">20</span> detik
     <div id="progressWrap"><div id="progressBar"></div></div>
   </div>
+  
+  <div id="startScreen">
+  <h2 style="text-align:center;margin-bottom:20px;">
+    Sudah siap?
+  </h2>
+  <button id="startBtn">Mulai</button>
+</div>
 
-  <div id="quiz">
+  <div id="quiz" class="hidden">
     <div id="questionText"></div>
     <div id="answers" class="answer-buttons"></div>
 
@@ -276,7 +305,16 @@ const answers = document.getElementById("answers");
 const result = document.getElementById("result");
 const nextBtn = document.getElementById("nextBtn");
 const quizBox = document.querySelector(".quiz-box");
+const startScreen = document.getElementById("startScreen");
+const startBtn = document.getElementById("startBtn");
 
+startBtn.onclick = ()=>{
+  startScreen.classList.add("hidden");
+  quiz.classList.remove("hidden");
+
+  idx = 0;
+  show();
+};
 /* ===== FUNGSI YANG HILANG (WAJIB) ===== */
 function shuffle(arr){
   for(let i=arr.length-1;i>0;i--){
@@ -302,7 +340,7 @@ function animateQuestion(){
 
 fetch("soal.json")
   .then(r=>r.json())
-  .then(d=>{data=d;show()});
+  .then(d=>{data=d});
 
 /* ===== TIMER ASLI + VISUAL ===== */
 function startTimer(){
