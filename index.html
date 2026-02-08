@@ -332,19 +332,20 @@ timerBox.classList.add("hidden");
 const countdown = document.getElementById("countdown");
 const countNum = document.getElementById("countNum");
 
-startBtn.onclick = () => {
-  startScreen.classList.add("hidden");
+startCountdown(() => {
+  countdown.classList.remove("show"); // sembunyikan countdown
+  quiz.classList.remove("hidden");
+  timerBox.classList.remove("hidden");
 
-  countdown.classList.add("show");  // tampilkan countdown
-  startCountdown(() => {
-    countdown.classList.remove("show"); // sembunyikan countdown
-    quiz.classList.remove("hidden");
-    timerBox.classList.remove("hidden");
+  // Paksa browser merender quiz dulu
+  void quiz.offsetWidth;
 
+  // Panggil show() setelah reflow
+  setTimeout(() => {
     idx = 0;
     show();
-  });
-};
+  }, 50); // delay 50ms
+});
 function animateQuestion(){
   questionText.classList.remove("fade-enter","fade-enter-active");
   answers.classList.remove("fade-enter","fade-enter-active");
