@@ -508,15 +508,16 @@ function startCountdown(callback){
 
   const cd = setInterval(()=>{
     n--;
+    if(n >= 0){
+      countNum.textContent = n; // tampilkan 0 juga
+    }
 
-    if(n > 0){
-      countNum.textContent = n;
-    }else{
+    if(n < 0){
       clearInterval(cd);
       countdown.classList.add("hidden");
-      callback(); // ← lanjut ke soal
+      callback(); // lanjut ke soal
     }
-  },1000);
+  }, 1000);
 }
 
 </script>
