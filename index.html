@@ -363,10 +363,11 @@ function pauseTimer(){
 /* ===== LOGIKA ASLI TIDAK DIUBAH ===== */
 function show(){
   const q=data[idx];
+  result.classList.remove("show");
   questionText.innerText=`Soal ${idx+1}: ${q.question}`;
   answers.innerHTML="";
-  startTimer();
   animateQuestion();
+  startTimer();
 
   currentOptions=["A","B","C","D","E"].map((l,i)=>({
     text:q["option_"+l],
@@ -397,8 +398,9 @@ function check(btn,opt){
     if(b===btn&&!opt.isCorrect)b.classList.add("wrong");
     b.disabled=true;
   });
-
+  
   result.classList.remove("hidden");
+  requestAnimationFrame(()=>result.classList.add("show"));
 
   if(opt.isCorrect){
     correct++;score+=POINT;
@@ -435,10 +437,6 @@ window.addEventListener("load",()=>{
 questionText.classList.remove("fade-enter-active");
 answers.classList.remove("fade-enter-active");
 
-setTimeout(()=>{
-  idx++;
-  if(idx<data.length)show();
-},200);
 </script>
 </body>
 </html>
