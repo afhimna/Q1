@@ -244,7 +244,7 @@ body.page-ready{
 #countdown {
   position: fixed;
   inset: 0;
-  display: flex;
+  display: none;      /* hidden awal */
   justify-content: center;
   align-items: center;
   background: rgba(2,6,23,0.85);
@@ -252,11 +252,11 @@ body.page-ready{
   font-weight: bold;
   color: #22c55e;
   z-index: 999;
-  pointer-events: none; /* tambahkan ini */
+  pointer-events: none; /* agar tidak menutupi tombol */
 }
-
-#countdown:not(.hidden) {
-  pointer-events: auto; /* hanya aktif saat countdown jalan */
+#countdown.show {
+  display: flex;
+  pointer-events: auto;
 }
 </style>
 </head>
@@ -332,10 +332,12 @@ timerBox.classList.add("hidden");
 const countdown = document.getElementById("countdown");
 const countNum = document.getElementById("countNum");
 
-startBtn.onclick = ()=>{
+startBtn.onclick = () => {
   startScreen.classList.add("hidden");
 
-  startCountdown(()=>{
+  countdown.classList.add("show");  // tampilkan countdown
+  startCountdown(() => {
+    countdown.classList.remove("show"); // sembunyikan countdown
     quiz.classList.remove("hidden");
     timerBox.classList.remove("hidden");
 
@@ -509,20 +511,16 @@ answers.classList.remove("fade-enter-active");
 function startCountdown(callback){
   let n = 3;
   countNum.textContent = n;
-  countdown.classList.remove("hidden");
 
   const cd = setInterval(()=>{
     n--;
-    if(n >= 0){
-      countNum.textContent = n; // tampilkan 0 juga
-    }
+    if(n >= 0) countNum.textContent = n;
 
     if(n < 0){
       clearInterval(cd);
-      countdown.classList.add("hidden");
       callback(); // lanjut ke soal
     }
-  }, 1000);
+  },1000);
 }
 
 </script>
