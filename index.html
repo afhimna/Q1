@@ -241,17 +241,22 @@ body.page-ready{
 #timerBox:not(.hidden){
   opacity:1;
 }
-#countdown{
-  position:fixed;
-  inset:0;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  background:rgba(2,6,23,.85);
-  font-size:5rem;
-  font-weight:bold;
-  color:#22c55e;
-  z-index:999;
+#countdown {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(2,6,23,0.85);
+  font-size: 5rem;
+  font-weight: bold;
+  color: #22c55e;
+  z-index: 999;
+  pointer-events: none; /* tambahkan ini */
+}
+
+#countdown:not(.hidden) {
+  pointer-events: auto; /* hanya aktif saat countdown jalan */
 }
 </style>
 </head>
