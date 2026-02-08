@@ -327,6 +327,18 @@ const quiz = document.getElementById("quiz");
 const quizBox = document.querySelector(".quiz-box");
 const startScreen = document.getElementById("startScreen");
 const startBtn = document.getElementById("startBtn");
+startBtn.disabled = true; // disable dulu
+
+fetch("soal.json")
+  .then(r => r.json())
+  .then(d => {
+    data = d;
+    startBtn.disabled = false; // enable start setelah data siap
+  })
+  .catch(e => {
+    alert("Gagal memuat soal.json");
+    console.error(e);
+  });
 const timerBox = document.getElementById("timerBox");
 timerBox.classList.add("hidden");
 const countdown = document.getElementById("countdown");
@@ -523,6 +535,23 @@ function startCountdown(callback){
     }
   },1000);
 }
+startBtn.onclick = () => {
+  startScreen.classList.add("hidden");
+  countdown.classList.add("show");  // tampilkan countdown
+
+  startCountdown(() => {
+    countdown.classList.remove("show");
+    quiz.classList.remove("hidden");
+    timerBox.classList.remove("hidden");
+
+    // Paksa browser render quiz dulu
+    void quiz.offsetWidth;
+
+    // Panggil show() setelah render
+    idx = 0;
+    show();
+  });
+};
 
 </script>
 </body>
