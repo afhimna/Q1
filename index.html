@@ -53,9 +53,12 @@ body{
   width:100%;
   transition:width .3s linear;
 }
-.progress-safe{ background:#ef4444; }   /* hijau */
+
+/* WARNA DILURUSKAN (LOGIKA TETAP) */
+.progress-safe{ background:#22c55e; }   /* hijau */
 .progress-warn{ background:#eab308; }   /* kuning */
-.progress-danger{ background:#22c55e; } /* merah */
+.progress-danger{ background:#ef4444; } /* merah */
+
 #timerBox.danger{color:#ef4444}
 
 #questionText{
@@ -142,12 +145,12 @@ body{
   50%{background:#3f0d0d}
   100%{background:#020617}
 }
+
 /* ===== TRANSISI SOAL ===== */
 .fade-enter{
   opacity:0;
   transform:translateY(12px);
 }
-
 .fade-enter-active{
   opacity:1;
   transform:translateY(0);
@@ -159,7 +162,6 @@ body{
 <body>
 <div class="quiz-box">
 
-  <!-- TIMER -->
   <div id="timerBox">
     ⏳ Waktu: <span id="timeNum">20</span> detik
     <div id="progressWrap"><div id="progressBar"></div></div>
@@ -210,6 +212,14 @@ const result = document.getElementById("result");
 const nextBtn = document.getElementById("nextBtn");
 const quizBox = document.querySelector(".quiz-box");
 
+/* ===== FUNGSI YANG HILANG (WAJIB) ===== */
+function shuffle(arr){
+  for(let i=arr.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [arr[i],arr[j]]=[arr[j],arr[i]];
+  }
+}
+
 fetch("soal.json")
   .then(r=>r.json())
   .then(d=>{data=d;show()});
@@ -220,7 +230,7 @@ function startTimer(){
   clearInterval(countdownInterval);
 
   timerActive = true;
-  quizBox.classList.remove("timer-warning");
+  quizBox.classList.remove("timer-warning","alarm-on");
   timeNum.parentElement.classList.remove("danger");
 
   remaining = TIME_LIMIT/1000;
@@ -228,40 +238,35 @@ function startTimer(){
   progressBar.style.width="100%";
 
   countdownInterval = setInterval(()=>{
-    if(!timerActive) return;
+    if(!timerActive)return;
 
     remaining--;
     timeNum.textContent = remaining;
-    progressBar.style.width =
-  (remaining / (TIME_LIMIT/1000)) * 100 + "%";
+    progressBar.style.width = (remaining/(TIME_LIMIT/1000))*100+"%";
 
-/* RESET kelas warna */
-progressBar.classList.remove(
-  "progress-safe",
-  "progress-warn",
-  "progress-danger"
-);
+    progressBar.classList.remove("progress-safe","progress-warn","progress-danger");
 
-/* ATUR warna berdasarkan sisa waktu */
-if(remaining > 10){
-  progressBar.classList.add("progress-safe");
-}else if(remaining > 5){
-  progressBar.classList.add("progress-warn");
-}else{
-  progressBar.classList.add("progress-danger");
-}
+    if(remaining>10){
+      progressBar.classList.add("progress-safe");
+    }else if(remaining>5){
+      progressBar.classList.add("progress-warn");
+    }else{
+      progressBar.classList.add("progress-danger");
+    }
 
-    tickSound.currentTime=0;
-    tickSound.play();
+    if(remaining>0){
+      tickSound.currentTime=0;
+      tickSound.play();
+    }
 
-    if(remaining<=5){
-      quizBox.classList.add("timer-warning");
+    if(remaining<=5 && !quizBox.classList.contains("alarm-on")){
+      quizBox.classList.add("timer-warning","alarm-on");
       timeNum.parentElement.classList.add("danger");
       alarmSound.currentTime=0;
       alarmSound.play();
     }
 
-    if(remaining<=0) clearInterval(countdownInterval);
+    if(remaining<=0)clearInterval(countdownInterval);
   },1000);
 
   timer=setTimeout(()=>{if(timerActive)timeUp()},TIME_LIMIT);
@@ -271,35 +276,33 @@ function pauseTimer(){
   timerActive=false;
   clearTimeout(timer);
   clearInterval(countdownInterval);
+  tickSound.pause();
+  alarmSound.pause();
 }
 
 /* ===== LOGIKA ASLI TIDAK DIUBAH ===== */
 function show(){
-  const q = data[idx];
-  questionText.innerText = `Soal ${idx+1}: ${q.question}`;
-  answers.innerHTML = "";
+  const q=data[idx];
+  questionText.innerText=`Soal ${idx+1}: ${q.question}`;
+  answers.innerHTML="";
 
-  currentOptions = ["A","B","C","D","E"].map((l,i)=>({
-    text: q["option_"+l],
-    isCorrect: i === Number(q.answer_index)
+  currentOptions=["A","B","C","D","E"].map((l,i)=>({
+    text:q["option_"+l],
+    isCorrect:i===Number(q.answer_index)
   }));
 
   shuffle(currentOptions);
 
   currentOptions.forEach(opt=>{
-    const b = document.createElement("button");
-    b.textContent = opt.text;
-    b.onclick = ()=>check(b, opt);
+    const b=document.createElement("button");
+    b.textContent=opt.text;
+    b.onclick=()=>check(b,opt);
     answers.appendChild(b);
   });
 
   result.classList.add("hidden");
   nextBtn.classList.add("hidden");
-
   startTimer();
-
-  /* ⬇️ TAMBAHAN INI */
-  animateQuestion();
 }
 
 function check(btn,opt){
@@ -318,13 +321,11 @@ function check(btn,opt){
   if(opt.isCorrect){
     correct++;score+=POINT;
     result.innerHTML=`<div class="correct-text">✔ Jawaban Benar</div><div class="explain">${q.explanation}</div>`;
-}else{
-  wrongCount++;
-  result.innerHTML = `
-    <div class="wrong-text">✖ Jawaban Salah</div>
-    <div class="explain">${q.explanation}</div>
-  `;
-}
+  }else{
+    wrongCount++;
+    result.innerHTML=`<div class="wrong-text">✖ Jawaban Salah</div><div class="explain">${q.explanation}</div>`;
+  }
+
   scoreNum.textContent=score;
   cNum.textContent=correct;
   wNum.textContent=wrongCount;
