@@ -163,15 +163,6 @@ body.page-ready{
   transform:translateY(0);
   transition:opacity .4s ease, transform .4s ease;
 }
-.fade-enter{
-  opacity:0;
-  transform:translateY(12px);
-}
-.fade-enter-active{
-  opacity:1;
-  transform:translateY(0);
-  transition:opacity .4s ease, transform .4s ease;
-}
 #nextBtn{
   opacity:0;
   transform:translateY(8px);
@@ -327,6 +318,7 @@ const questionText = document.getElementById("questionText");
 const answers = document.getElementById("answers");
 const result = document.getElementById("result");
 const nextBtn = document.getElementById("nextBtn");
+const quiz = document.getElementById("quiz");
 const quizBox = document.querySelector(".quiz-box");
 const startScreen = document.getElementById("startScreen");
 const startBtn = document.getElementById("startBtn");
@@ -446,7 +438,6 @@ function show(){
 
   result.classList.add("hidden");
   nextBtn.classList.add("hidden");
-  startTimer();
 }
 
 function check(btn,opt){
