@@ -191,6 +191,36 @@ body.page-ready{
   75%{transform:translateX(-2px)}
   100%{transform:translateX(0)}
 }
+/* ===== ANIMASI PENJELASAN ===== */
+#result{
+  opacity:0;
+  transform:translateY(10px);
+  transition:opacity .45s ease, transform .45s ease;
+}
+
+#result.show{
+  opacity:1;
+  transform:translateY(0);
+}
+
+/* isi penjelasan muncul sedikit lebih lambat */
+#result .explain{
+  opacity:0;
+  transform:translateY(6px);
+  transition:opacity .4s ease .15s, transform .4s ease .15s;
+}
+
+#result.show .explain{
+  opacity:1;
+  transform:translateY(0);
+}
+.explain{
+  animation:fadeText .6s ease;
+}
+@keyframes fadeText{
+  from{opacity:0}
+  to{opacity:1}
+}
 </style>
 </head>
 
@@ -389,6 +419,7 @@ function timeUp(){
   wrongCount++;
   const q=data[idx];
   result.classList.remove("hidden");
+  requestAnimationFrame(()=>result.classList.add("show"));
   result.innerHTML=`<div class="wrong-text">⏰ Waktu habis</div><div class="explain">${q.explanation}</div>`;
   wNum.textContent=wrongCount;
   nextBtn.classList.remove("hidden");
