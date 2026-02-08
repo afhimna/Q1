@@ -181,6 +181,16 @@ body.page-ready{
   opacity:1;
   transform:translateY(0);
 }
+.timer-warning{
+  animation:pulseRed 1s infinite, shake .3s infinite;
+}
+@keyframes shake{
+  0%{transform:translateX(0)}
+  25%{transform:translateX(-2px)}
+  50%{transform:translateX(2px)}
+  75%{transform:translateX(-2px)}
+  100%{transform:translateX(0)}
+}
 </style>
 </head>
 
@@ -391,6 +401,13 @@ nextBtn.onclick=()=>{
 window.addEventListener("load",()=>{
   document.body.classList.add("page-ready");
 });
+questionText.classList.remove("fade-enter-active");
+answers.classList.remove("fade-enter-active");
+
+setTimeout(()=>{
+  idx++;
+  if(idx<data.length)show();
+},200);
 </script>
 </body>
 </html>
