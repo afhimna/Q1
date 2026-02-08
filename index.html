@@ -250,11 +250,27 @@ body.page-ready{
 #timerBox:not(.hidden){
   opacity:1;
 }
+#countdown{
+  position:fixed;
+  inset:0;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:rgba(2,6,23,.85);
+  font-size:5rem;
+  font-weight:bold;
+  color:#22c55e;
+  z-index:999;
+}
 </style>
 </head>
 
 <body>
 <div class="quiz-box">
+
+  <div id="countdown" class="hidden">
+  <span id="countNum">3</span>
+</div>
 
   <div id="timerBox">
     ⏳ Waktu: <span id="timeNum">20</span> detik
@@ -316,24 +332,20 @@ const startScreen = document.getElementById("startScreen");
 const startBtn = document.getElementById("startBtn");
 const timerBox = document.getElementById("timerBox");
 timerBox.classList.add("hidden");
+const countdown = document.getElementById("countdown");
+const countNum = document.getElementById("countNum");
 
 startBtn.onclick = ()=>{
   startScreen.classList.add("hidden");
-  quiz.classList.remove("hidden");
 
-  timerBox.classList.remove("hidden");
+  startCountdown(()=>{
+    quiz.classList.remove("hidden");
+    timerBox.classList.remove("hidden");
 
-  idx = 0;
-  show();
+    idx = 0;
+    show();
+  });
 };
-/* ===== FUNGSI YANG HILANG (WAJIB) ===== */
-function shuffle(arr){
-  for(let i=arr.length-1;i>0;i--){
-    const j=Math.floor(Math.random()*(i+1));
-    [arr[i],arr[j]]=[arr[j],arr[i]];
-    
-  }
-}
 function animateQuestion(){
   questionText.classList.remove("fade-enter","fade-enter-active");
   answers.classList.remove("fade-enter","fade-enter-active");
@@ -497,6 +509,24 @@ window.addEventListener("load",()=>{
 });
 questionText.classList.remove("fade-enter-active");
 answers.classList.remove("fade-enter-active");
+
+function startCountdown(callback){
+  let n = 3;
+  countNum.textContent = n;
+  countdown.classList.remove("hidden");
+
+  const cd = setInterval(()=>{
+    n--;
+
+    if(n > 0){
+      countNum.textContent = n;
+    }else{
+      clearInterval(cd);
+      countdown.classList.add("hidden");
+      callback(); // ← lanjut ke soal
+    }
+  },1000);
+}
 
 </script>
 </body>
