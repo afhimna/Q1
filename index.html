@@ -19,7 +19,14 @@ body{
   color:#e5e7eb;
   font-family:"Times New Roman",serif;
 }
+body{
+  opacity:0;
+  transition:opacity .8s ease;
+}
 
+body.page-ready{
+  opacity:1;
+}
 .quiz-box{
   width:100%;
   max-width:720px;
@@ -156,6 +163,24 @@ body{
   transform:translateY(0);
   transition:opacity .4s ease, transform .4s ease;
 }
+.fade-enter{
+  opacity:0;
+  transform:translateY(12px);
+}
+.fade-enter-active{
+  opacity:1;
+  transform:translateY(0);
+  transition:opacity .4s ease, transform .4s ease;
+}
+#nextBtn{
+  opacity:0;
+  transform:translateY(8px);
+  transition:.3s ease;
+}
+#nextBtn:not(.hidden){
+  opacity:1;
+  transform:translateY(0);
+}
 </style>
 </head>
 
@@ -217,7 +242,22 @@ function shuffle(arr){
   for(let i=arr.length-1;i>0;i--){
     const j=Math.floor(Math.random()*(i+1));
     [arr[i],arr[j]]=[arr[j],arr[i]];
+    
   }
+}
+function animateQuestion(){
+  questionText.classList.remove("fade-enter","fade-enter-active");
+  answers.classList.remove("fade-enter","fade-enter-active");
+
+  void questionText.offsetWidth; // paksa reflow
+
+  questionText.classList.add("fade-enter");
+  answers.classList.add("fade-enter");
+
+  requestAnimationFrame(()=>{
+    questionText.classList.add("fade-enter-active");
+    answers.classList.add("fade-enter-active");
+  });
 }
 
 fetch("soal.json")
@@ -285,6 +325,8 @@ function show(){
   const q=data[idx];
   questionText.innerText=`Soal ${idx+1}: ${q.question}`;
   answers.innerHTML="";
+  startTimer();
+  animateQuestion();
 
   currentOptions=["A","B","C","D","E"].map((l,i)=>({
     text:q["option_"+l],
@@ -346,6 +388,9 @@ nextBtn.onclick=()=>{
   idx++;
   if(idx<data.length)show();
 };
+window.addEventListener("load",()=>{
+  document.body.classList.add("page-ready");
+});
 </script>
 </body>
 </html>
