@@ -414,6 +414,12 @@ function check(btn,opt){
   cNum.textContent=correct;
   wNum.textContent=wrongCount;
   nextBtn.classList.remove("hidden");
+  setTimeout(()=>{
+  result.scrollIntoView({
+    behavior: "smooth",
+    block: "center"
+  });
+}, 150);
 }
 
 function timeUp(){
@@ -425,6 +431,12 @@ function timeUp(){
   result.innerHTML=`<div class="wrong-text">⏰ Waktu habis</div><div class="explain">${q.explanation}</div>`;
   wNum.textContent=wrongCount;
   nextBtn.classList.remove("hidden");
+  setTimeout(()=>{
+  result.scrollIntoView({
+    behavior: "smooth",
+    block: "center"
+  });
+}, 150);
 }
 
 nextBtn.onclick=()=>{
