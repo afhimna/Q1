@@ -371,10 +371,6 @@ function animateQuestion(){
   });
 }
 
-fetch("soal.json")
-  .then(r=>r.json())
-  .then(d=>{data=d});
-
 /* ===== TIMER ASLI + VISUAL ===== */
 function startTimer(){
   clearTimeout(timer);
