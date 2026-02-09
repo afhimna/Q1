@@ -19,8 +19,14 @@ body{
   color:#e5e7eb;
   font-family:"Times New Roman",serif;
 }
-body{opacity:0;transition:opacity .8s ease;}
-body.page-ready{opacity:1;}
+body{
+  opacity:0;
+  transition:opacity .8s ease;
+}
+
+body.page-ready{
+  opacity:1;
+}
 .quiz-box{
   width:100%;
   max-width:720px;
@@ -40,10 +46,7 @@ body.page-ready{opacity:1;}
   background:#020617;
   border:1px solid #334155;
   font-weight:bold;
-  opacity:0;
-  transition:.4s ease;
 }
-#timerBox:not(.hidden){opacity:1;}
 #progressWrap{
   margin-top:8px;
   height:8px;
@@ -57,9 +60,12 @@ body.page-ready{opacity:1;}
   width:100%;
   transition:width .3s linear;
 }
-.progress-safe{ background:#22c55e; }
-.progress-warn{ background:#eab308; }
-.progress-danger{ background:#ef4444; }
+
+/* WARNA DILURUSKAN (LOGIKA TETAP) */
+.progress-safe{ background:#22c55e; }   /* hijau */
+.progress-warn{ background:#eab308; }   /* kuning */
+.progress-danger{ background:#ef4444; } /* merah */
+
 #timerBox.danger{color:#ef4444}
 
 #questionText{
@@ -68,7 +74,11 @@ body.page-ready{opacity:1;}
   margin:22px 0;
   text-align:center;
 }
-.answer-buttons{display:grid;gap:14px;}
+
+.answer-buttons{
+  display:grid;
+  gap:14px;
+}
 .answer-buttons button{
   padding:14px;
   background:#020617;
@@ -81,8 +91,16 @@ body.page-ready{opacity:1;}
   font-family:"Amiri",serif;
 }
 .answer-buttons button:hover{background:#1e293b}
-.answer-buttons button.correct{border-color:#22c55e;color:#22c55e;box-shadow:0 0 12px rgba(34,197,94,.45);}
-.answer-buttons button.wrong{background:#3f0d0d;border-color:#ef4444;color:#ef4444;}
+.answer-buttons button.correct{
+  border-color:#22c55e;
+  color:#22c55e;
+  box-shadow:0 0 12px rgba(34,197,94,.45);
+}
+.answer-buttons button.wrong{
+  background:#3f0d0d;
+  border-color:#ef4444;
+  color:#ef4444;
+}
 
 .score-board{
   margin-top:20px;
@@ -98,13 +116,6 @@ body.page-ready{opacity:1;}
   padding:15px;
   border-radius:16px;
   border:1px solid #334155;
-  opacity:0;
-  transform:translateY(10px);
-  transition:opacity .45s ease, transform .45s ease;
-}
-#result.show{
-  opacity:1;
-  transform:translateY(0);
 }
 .correct-text{color:#22c55e;font-weight:bold}
 .wrong-text{color:#ef4444;font-weight:bold}
@@ -116,9 +127,8 @@ body.page-ready{opacity:1;}
   border-radius:12px;
   border-left:4px solid #38bdf8;
   line-height:1.7;
-  animation:fadeText .6s ease;
 }
-@keyframes fadeText{from{opacity:0}to{opacity:1}}
+
 #nextBtn{
   margin-top:22px;
   width:100%;
@@ -128,58 +138,129 @@ body.page-ready{opacity:1;}
   background:#2563eb;
   color:white;
   cursor:pointer;
+}
+#nextBtn:hover{background:#1d4ed8}
+
+.hidden{display:none}
+
+/* ===== TIMER PANIC ===== */
+.timer-warning{
+  animation:pulseRed 1s infinite;
+}
+@keyframes pulseRed{
+  0%{background:#020617}
+  50%{background:#3f0d0d}
+  100%{background:#020617}
+}
+
+/* ===== TRANSISI SOAL ===== */
+.fade-enter{
+  opacity:0;
+  transform:translateY(12px);
+}
+.fade-enter-active{
+  opacity:1;
+  transform:translateY(0);
+  transition:opacity .4s ease, transform .4s ease;
+}
+#nextBtn{
   opacity:0;
   transform:translateY(8px);
   transition:.3s ease;
 }
-#nextBtn:not(.hidden){opacity:1;transform:translateY(0);}
-#nextBtn:hover{background:#1d4ed8;}
-
-.hidden{display:none;}
-
-/* ===== COUNTDOWN OVERLAY ===== */
-#countdown {
-  position: fixed;
-  inset: 0;
-  display: none;
-  justify-content: center;
-  align-items: center;
-  background: rgba(2,6,23,0.85);
-  font-size: 5rem;
-  font-weight: bold;
-  color: #22c55e;
-  z-index: 999;
-  pointer-events: none;
+#nextBtn:not(.hidden){
+  opacity:1;
+  transform:translateY(0);
 }
-#countdown.show {display:flex;}
+.timer-warning{
+  animation:pulseRed 1s infinite, shake .3s infinite;
+}
+@keyframes shake{
+  0%{transform:translateX(0)}
+  25%{transform:translateX(-2px)}
+  50%{transform:translateX(2px)}
+  75%{transform:translateX(-2px)}
+  100%{transform:translateX(0)}
+}
+/* ===== ANIMASI PENJELASAN ===== */
+#result{
+  opacity:0;
+  transform:translateY(10px);
+  transition:opacity .45s ease, transform .45s ease;
+}
+
+#result.show{
+  opacity:1;
+  transform:translateY(0);
+}
+
+/* isi penjelasan muncul sedikit lebih lambat */
+#result .explain{
+  opacity:0;
+  transform:translateY(6px);
+  transition:opacity .4s ease .15s, transform .4s ease .15s;
+}
+
+#result.show .explain{
+  opacity:1;
+  transform:translateY(0);
+}
+.explain{
+  animation:fadeText .6s ease;
+}
+#startScreen{
+  text-align:center;
+  animation:fadeText .6s ease;
+}
+
+#startBtn{
+  padding:14px 26px;
+  font-size:1.1rem;
+  border:none;
+  border-radius:16px;
+  background:#22c55e;
+  color:#020617;
+  cursor:pointer;
+  transition:.3s ease;
+}
+#startBtn:hover{
+  background:#16a34a;
+}
+
+#quiz.hidden{
+  display:none;
+}
+#timerBox{
+  opacity:0;
+  transition:.4s ease;
+}
+#timerBox:not(.hidden){
+  opacity:1;
+}
 </style>
 </head>
 
 <body>
 <div class="quiz-box">
-  <!-- COUNTDOWN -->
-  <div id="countdown" class="hidden"><span id="countNum">3</span></div>
-
-  <!-- TIMER -->
-  <div id="timerBox" class="hidden">
+  <div id="timerBox">
     ⏳ Waktu: <span id="timeNum">20</span> detik
     <div id="progressWrap"><div id="progressBar"></div></div>
   </div>
-
-  <!-- START SCREEN -->
+  
   <div id="startScreen">
     <h2 style="text-align:center;margin-bottom:20px;">Sudah siap?</h2>
     <button id="startBtn">Mulai</button>
   </div>
 
-  <!-- QUIZ -->
   <div id="quiz" class="hidden">
     <div id="questionText"></div>
     <div id="answers" class="answer-buttons"></div>
+
     <div class="score-board">
       Skor: <b id="scoreNum">0</b> / 100<br>
       Benar: <span id="cNum">0</span> | Salah: <span id="wNum">0</span>
     </div>
+
     <div id="result" class="hidden"></div>
     <button id="nextBtn" class="hidden">Soal Selanjutnya</button>
   </div>
@@ -192,17 +273,15 @@ body.page-ready{opacity:1;}
 const POINT = 5;
 const TIME_LIMIT = 20000;
 
-/* ===== VARIABEL ===== */
-let data = [], idx = 0, score = 0, correct = 0, wrongCount = 0;
-let currentOptions = [];
+let data = [], idx = 0, score = 0, correct = 0, wrongCount = 0, currentOptions = [];
 let timer = null, timerActive = false;
-let countdownInterval = null, remaining = TIME_LIMIT/1000;
+let remaining = TIME_LIMIT/1000;
 
-/* ===== ELEMENT ===== */
 const timeNum = document.getElementById("timeNum");
 const progressBar = document.getElementById("progressBar");
 const tickSound = document.getElementById("tickSound");
 const alarmSound = document.getElementById("alarmSound");
+
 const scoreNum = document.getElementById("scoreNum");
 const cNum = document.getElementById("cNum");
 const wNum = document.getElementById("wNum");
@@ -214,17 +293,16 @@ const quiz = document.getElementById("quiz");
 const quizBox = document.querySelector(".quiz-box");
 const startScreen = document.getElementById("startScreen");
 const startBtn = document.getElementById("startBtn");
-const timerBox = document.getElementById("timerBox");
-const countdown = document.getElementById("countdown");
-const countNum = document.getElementById("countNum");
-
 startBtn.disabled = true;
+
 fetch("soal.json")
   .then(r => r.json())
-  .then(d => {data = d; startBtn.disabled = false;})
-  .catch(e => {alert("Gagal memuat soal.json"); console.error(e);});
+  .then(d => { data = d; startBtn.disabled = false; })
+  .catch(e => { alert("Gagal memuat soal.json"); console.error(e); });
 
-/* ===== ANIMASI SOAL ===== */
+const timerBox = document.getElementById("timerBox");
+timerBox.classList.add("hidden");
+
 function animateQuestion(){
   questionText.classList.remove("fade-enter","fade-enter-active");
   answers.classList.remove("fade-enter","fade-enter-active");
@@ -237,67 +315,66 @@ function animateQuestion(){
   });
 }
 
-/* ===== TIMER ===== */
 function startTimer(){
   clearTimeout(timer);
-  clearInterval(countdownInterval);
-  timerActive = true;
+  timerActive=true;
   quizBox.classList.remove("timer-warning","alarm-on");
   timeNum.parentElement.classList.remove("danger");
   remaining = TIME_LIMIT/1000;
   timeNum.textContent = remaining;
   progressBar.style.width="100%";
 
-  countdownInterval = setInterval(()=>{
-    if(!timerActive)return;
+  const countdownInterval = setInterval(()=>{
+    if(!timerActive){ clearInterval(countdownInterval); return; }
     remaining--;
     timeNum.textContent = remaining;
     progressBar.style.width = (remaining/(TIME_LIMIT/1000))*100+"%";
     progressBar.classList.remove("progress-safe","progress-warn","progress-danger");
-
     if(remaining>10) progressBar.classList.add("progress-safe");
     else if(remaining>5) progressBar.classList.add("progress-warn");
     else progressBar.classList.add("progress-danger");
 
-    if(remaining>0){tickSound.currentTime=0; tickSound.play();}
+    if(remaining>0){ tickSound.currentTime=0; tickSound.play(); }
+
     if(remaining<=5 && !quizBox.classList.contains("alarm-on")){
       quizBox.classList.add("timer-warning","alarm-on");
       timeNum.parentElement.classList.add("danger");
-      alarmSound.currentTime=0; alarmSound.play();
+      alarmSound.currentTime=0;
+      alarmSound.play();
     }
+
     if(remaining<=0) clearInterval(countdownInterval);
   },1000);
 
-  timer = setTimeout(()=>{if(timerActive) timeUp();}, TIME_LIMIT);
+  timer=setTimeout(()=>{if(timerActive)timeUp()},TIME_LIMIT);
 }
 
 function pauseTimer(){
   timerActive=false;
   clearTimeout(timer);
-  clearInterval(countdownInterval);
   tickSound.pause();
   alarmSound.pause();
 }
 
-/* ===== LOGIKA QUIZ ===== */
 function show(){
-  const q = data[idx];
+  const q=data[idx];
   result.classList.remove("show");
-  questionText.innerText = `Soal ${idx+1}: ${q.question}`;
-  answers.innerHTML = "";
+  questionText.innerText=`Soal ${idx+1}: ${q.question}`;
+  answers.innerHTML="";
   animateQuestion();
   startTimer();
 
-  currentOptions = ["A","B","C","D","E"].map((l,i)=>({
+  currentOptions=["A","B","C","D","E"].map((l,i)=>({
     text:q["option_"+l],
     isCorrect:i===Number(q.answer_index)
   }));
+
   shuffle(currentOptions);
 
   currentOptions.forEach(opt=>{
-    const b = document.createElement("button");
-    b.textContent = opt.text;
-    b.onclick = ()=>check(b,opt);
+    const b=document.createElement("button");
+    b.textContent=opt.text;
+    b.onclick=()=>check(b,opt);
     answers.appendChild(b);
   });
 
@@ -311,70 +388,56 @@ function check(btn,opt){
   const q=data[idx];
   [...answers.children].forEach((b,i)=>{
     if(currentOptions[i].isCorrect)b.classList.add("correct");
-    if(b===btn && !opt.isCorrect)b.classList.add("wrong");
+    if(b===btn&&!opt.isCorrect)b.classList.add("wrong");
     b.disabled=true;
   });
   result.classList.remove("hidden");
   requestAnimationFrame(()=>result.classList.add("show"));
-
-  if(opt.isCorrect){correct++; score+=POINT;
+  if(opt.isCorrect){
+    correct++;score+=POINT;
     result.innerHTML=`<div class="correct-text">✔ Jawaban Benar</div><div class="explain">${q.explanation}</div>`;
-  }else{wrongCount++;
+  }else{
+    wrongCount++;
     result.innerHTML=`<div class="wrong-text">✖ Jawaban Salah</div><div class="explain">${q.explanation}</div>`;
   }
   scoreNum.textContent=score;
   cNum.textContent=correct;
   wNum.textContent=wrongCount;
   nextBtn.classList.remove("hidden");
+  setTimeout(()=>{result.scrollIntoView({behavior:"smooth",block:"center"});},150);
 }
 
 function timeUp(){
   pauseTimer();
   wrongCount++;
-  const q = data[idx];
+  const q=data[idx];
   result.classList.remove("hidden");
   requestAnimationFrame(()=>result.classList.add("show"));
   result.innerHTML=`<div class="wrong-text">⏰ Waktu habis</div><div class="explain">${q.explanation}</div>`;
   wNum.textContent=wrongCount;
   nextBtn.classList.remove("hidden");
+  setTimeout(()=>{result.scrollIntoView({behavior:"smooth",block:"center"});},150);
 }
 
-nextBtn.onclick = ()=>{
+nextBtn.onclick=()=>{
   idx++;
-  if(idx<data.length) show();
-}
+  if(idx<data.length)show();
+};
 
-/* ===== COUNTDOWN ===== */
-function startCountdown(callback){
-  let n = 3;
-  countNum.textContent = n;
-  countdown.classList.remove("hidden");
-  const cd = setInterval(()=>{
-    n--;
-    if(n>=0) countNum.textContent = n;
-    if(n<0){
-      clearInterval(cd);
-      countdown.classList.add("hidden");
-      callback();
-    }
-  },1000);
-}
+window.addEventListener("load",()=>{ document.body.classList.add("page-ready"); });
 
-/* ===== START QUIZ ===== */
-startBtn.onclick = ()=>{
+questionText.classList.remove("fade-enter-active");
+answers.classList.remove("fade-enter-active");
+
+startBtn.onclick = () => {
   startScreen.classList.add("hidden");
-  startCountdown(()=>{
-    quiz.classList.remove("hidden");
-    timerBox.classList.remove("hidden");
-    show();
-  });
-}
+  quiz.classList.remove("hidden");
+  timerBox.classList.remove("hidden");
+  show();
+};
 
-window.addEventListener("load",()=>{document.body.classList.add("page-ready");});
-
-/* ===== UTILITY ===== */
-function shuffle(array){for(let i=array.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[array[i],array[j]]=[array[j],array[i]];}}
-
+/* ===== SHUFFLE ===== */
+function shuffle(a){for(let i=a.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}}
 </script>
 </body>
 </html>
