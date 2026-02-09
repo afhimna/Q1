@@ -533,13 +533,13 @@ startBtn.onclick = () => {
   startScreen.classList.add("hidden");
   countdown.classList.add("show");  // tampilkan countdown
 
-function shuffle(arr){
-  for(let i = arr.length - 1; i > 0; i--){
-    const j = Math.floor(Math.random() * (i + 1));
-    [arr[i], arr[j]] = [arr[j], arr[i]];
-  }
-}
-
+  startCountdown(()=>{  // callback setelah countdown selesai
+    countdown.classList.remove("show"); // sembunyikan countdown
+    quiz.classList.remove("hidden");    // tampilkan quiz
+    show();                             // mulai soal pertama
+    timerBox.classList.remove("hidden"); // tampilkan timer
+  });
+};
 </script>
 </body>
 </html>
