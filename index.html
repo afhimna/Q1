@@ -533,19 +533,12 @@ startBtn.onclick = () => {
   startScreen.classList.add("hidden");
   countdown.classList.add("show");  // tampilkan countdown
 
-  startCountdown(() => {
-    countdown.classList.remove("show");
-    quiz.classList.remove("hidden");
-    timerBox.classList.remove("hidden");
-
-    // Paksa browser render quiz dulu
-    void quiz.offsetWidth;
-
-    // Panggil show() setelah render
-    idx = 0;
-    show();
-  });
-};
+function shuffle(arr){
+  for(let i = arr.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+}
 
 </script>
 </body>
