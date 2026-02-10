@@ -18,15 +18,11 @@ body{
   align-items:center;
   color:#e5e7eb;
   font-family:"Times New Roman",serif;
-}
-body{
   opacity:0;
   transition:opacity .8s ease;
 }
+body.page-ready{opacity:1}
 
-body.page-ready{
-  opacity:1;
-}
 .quiz-box{
   width:100%;
   max-width:720px;
@@ -37,7 +33,7 @@ body.page-ready{
   box-shadow:0 0 40px rgba(0,0,0,.6);
 }
 
-/* ===== TIMER UI ===== */
+/* ===== TIMER ===== */
 #timerBox{
   text-align:center;
   margin-bottom:16px;
@@ -55,30 +51,20 @@ body.page-ready{
   overflow:hidden;
   border:1px solid #334155;
 }
-#progressBar{
-  height:100%;
-  width:100%;
-  transition:width .3s linear;
-}
-
-/* WARNA DILURUSKAN (LOGIKA TETAP) */
-.progress-safe{ background:#22c55e; }   /* hijau */
-.progress-warn{ background:#eab308; }   /* kuning */
-.progress-danger{ background:#ef4444; } /* merah */
-
+#progressBar{height:100%;width:100%;transition:width .3s linear}
+.progress-safe{background:#22c55e}
+.progress-warn{background:#eab308}
+.progress-danger{background:#ef4444}
 #timerBox.danger{color:#ef4444}
 
+/* ===== QUESTION ===== */
 #questionText{
   font-family:"Amiri",serif;
   font-size:1.45rem;
   margin:22px 0;
   text-align:center;
 }
-
-.answer-buttons{
-  display:grid;
-  gap:14px;
-}
+.answer-buttons{display:grid;gap:14px}
 .answer-buttons button{
   padding:14px;
   background:#020617;
@@ -116,7 +102,11 @@ body.page-ready{
   padding:15px;
   border-radius:16px;
   border:1px solid #334155;
+  opacity:0;
+  transform:translateY(10px);
+  transition:.45s ease;
 }
+#result.show{opacity:1;transform:translateY(0)}
 .correct-text{color:#22c55e;font-weight:bold}
 .wrong-text{color:#ef4444;font-weight:bold}
 .explain{
@@ -138,85 +128,21 @@ body.page-ready{
   background:#2563eb;
   color:white;
   cursor:pointer;
-}
-#nextBtn:hover{background:#1d4ed8}
-
-.hidden{display:none}
-
-/* ===== TIMER PANIC ===== */
-.timer-warning{
-  animation:pulseRed 1s infinite;
-}
-@keyframes pulseRed{
-  0%{background:#020617}
-  50%{background:#3f0d0d}
-  100%{background:#020617}
-}
-
-/* ===== TRANSISI SOAL ===== */
-.fade-enter{
-  opacity:0;
-  transform:translateY(12px);
-}
-.fade-enter-active{
-  opacity:1;
-  transform:translateY(0);
-  transition:opacity .4s ease, transform .4s ease;
-}
-#nextBtn{
   opacity:0;
   transform:translateY(8px);
   transition:.3s ease;
 }
-#nextBtn:not(.hidden){
-  opacity:1;
-  transform:translateY(0);
-}
-.timer-warning{
-  animation:pulseRed 1s infinite, shake .3s infinite;
-}
-@keyframes shake{
-  0%{transform:translateX(0)}
-  25%{transform:translateX(-2px)}
-  50%{transform:translateX(2px)}
-  75%{transform:translateX(-2px)}
-  100%{transform:translateX(0)}
-}
-/* ===== ANIMASI PENJELASAN ===== */
-#result{
-  opacity:0;
-  transform:translateY(10px);
-  transition:opacity .45s ease, transform .45s ease;
-}
+#nextBtn:not(.hidden){opacity:1;transform:translateY(0)}
+.hidden{display:none}
 
-#result.show{
-  opacity:1;
-  transform:translateY(0);
-}
+/* ===== ANIMASI ===== */
+.fade-enter{opacity:0;transform:translateY(12px)}
+.fade-enter-active{opacity:1;transform:translateY(0);transition:.4s ease}
+.timer-warning{animation:pulseRed 1s infinite,shake .3s infinite}
+@keyframes pulseRed{0%{background:#020617}50%{background:#3f0d0d}100%{background:#020617}}
+@keyframes shake{0%{transform:0}25%{transform:translateX(-2px)}50%{transform:translateX(2px)}75%{transform:translateX(-2px)}100%{transform:0}}
 
-/* isi penjelasan muncul sedikit lebih lambat */
-#result .explain{
-  opacity:0;
-  transform:translateY(6px);
-  transition:opacity .4s ease .15s, transform .4s ease .15s;
-}
-
-#result.show .explain{
-  opacity:1;
-  transform:translateY(0);
-}
-.explain{
-  animation:fadeText .6s ease;
-}
-@keyframes fadeText{
-  from{opacity:0}
-  to{opacity:1}
-}
-#startScreen{
-  text-align:center;
-  animation:fadeText .6s ease;
-}
-
+#startScreen{text-align:center}
 #startBtn{
   padding:14px 26px;
   font-size:1.1rem;
@@ -225,192 +151,91 @@ body.page-ready{
   background:#22c55e;
   color:#020617;
   cursor:pointer;
-  transition:.3s ease;
 }
-#startBtn:hover{
-  background:#16a34a;
-}
-
-#quiz.hidden{
-  display:none;
-}
-#timerBox{
-  opacity:0;
-  transition:.4s ease;
-}
-#timerBox:not(.hidden){
-  opacity:1;
-}
-#countdown {
-  position: fixed;
-  inset: 0;
-  display: none;      /* hidden awal */
-  justify-content: center;
-  align-items: center;
-  background: rgba(2,6,23,0.85);
-  font-size: 5rem;
-  font-weight: bold;
-  color: #22c55e;
-  z-index: 999;
-  pointer-events: none; /* agar tidak menutupi tombol */
-}
-#countdown.show {
-  display: flex;
-  pointer-events: none;
-}
-#countdown {
-  display: none;
-  pointer-events: none;
-}
-
-#countdown.show {
-  display: flex;
-}
-
+#startBtn:hover{background:#16a34a}
 </style>
 </head>
 
 <body>
 <div class="quiz-box">
 
-  <div id="countdown" class="hidden">
-  <span id="countNum">3</span>
+<div id="timerBox" class="hidden">
+  ⏳ Waktu: <span id="timeNum">20</span> detik
+  <div id="progressWrap"><div id="progressBar"></div></div>
 </div>
 
-  <div id="timerBox">
-    ⏳ Waktu: <span id="timeNum">20</span> detik
-    <div id="progressWrap"><div id="progressBar"></div></div>
-  </div>
-  
-  <div id="startScreen">
-  <h2 style="text-align:center;margin-bottom:20px;">
-    Sudah siap?
-  </h2>
-  <button id="startBtn">Mulai</button>
+<div id="startScreen">
+  <h2>Sudah siap?</h2>
+  <button id="startBtn" disabled>Mulai</button>
 </div>
 
-  <div id="quiz" class="hidden">
-    <div id="questionText"></div>
-    <div id="answers" class="answer-buttons"></div>
+<div id="quiz" class="hidden">
+  <div id="questionText"></div>
+  <div id="answers" class="answer-buttons"></div>
 
-    <div class="score-board">
-      Skor: <b id="scoreNum">0</b> / 100<br>
-      Benar: <span id="cNum">0</span> | Salah: <span id="wNum">0</span>
-    </div>
-
-    <div id="result" class="hidden"></div>
-    <button id="nextBtn" class="hidden">Soal Selanjutnya</button>
+  <div class="score-board">
+    Skor: <b id="scoreNum">0</b> / 100<br>
+    Benar: <span id="cNum">0</span> | Salah: <span id="wNum">0</span>
   </div>
+
+  <div id="result" class="hidden"></div>
+  <button id="nextBtn" class="hidden">Soal Selanjutnya</button>
+</div>
+
 </div>
 
 <audio id="tickSound" src="tick.mp3" preload="auto"></audio>
 <audio id="alarmSound" src="alarm.mp3" preload="auto"></audio>
 
 <script>
-const POINT = 5;
-const TIME_LIMIT = 20000;
+const POINT=5,TIME_LIMIT=20000;
+let data=[],idx=0,score=0,correct=0,wrongCount=0;
+let currentOptions=[],timer=null,timerActive=false;
+let countdownInterval=null,remaining=TIME_LIMIT/1000;
 
-/* ===== VARIABEL ASLI (TIDAK DIUBAH) ===== */
-let data = [], idx = 0, score = 0, correct = 0, wrongCount = 0, wrong = [];
-let currentOptions = [];
-let timer = null;
-let timerActive = false;
+const timeNum=document.getElementById("timeNum"),
+progressBar=document.getElementById("progressBar"),
+tickSound=document.getElementById("tickSound"),
+alarmSound=document.getElementById("alarmSound"),
+scoreNum=document.getElementById("scoreNum"),
+cNum=document.getElementById("cNum"),
+wNum=document.getElementById("wNum"),
+questionText=document.getElementById("questionText"),
+answers=document.getElementById("answers"),
+result=document.getElementById("result"),
+nextBtn=document.getElementById("nextBtn"),
+quiz=document.getElementById("quiz"),
+quizBox=document.querySelector(".quiz-box"),
+startScreen=document.getElementById("startScreen"),
+startBtn=document.getElementById("startBtn"),
+timerBox=document.getElementById("timerBox");
 
-/* ===== TAMBAHAN TIMER ===== */
-const timeNum = document.getElementById("timeNum");
-const progressBar = document.getElementById("progressBar");
-const tickSound = document.getElementById("tickSound");
-const alarmSound = document.getElementById("alarmSound");
-let countdownInterval = null;
-let remaining = TIME_LIMIT/1000;
+fetch("soal.json").then(r=>r.json()).then(d=>{
+  data=d;startBtn.disabled=false;
+});
 
-/* ===== ELEMENT ===== */
-const scoreNum = document.getElementById("scoreNum");
-const cNum = document.getElementById("cNum");
-const wNum = document.getElementById("wNum");
-const questionText = document.getElementById("questionText");
-const answers = document.getElementById("answers");
-const result = document.getElementById("result");
-const nextBtn = document.getElementById("nextBtn");
-const quiz = document.getElementById("quiz");
-const quizBox = document.querySelector(".quiz-box");
-const startScreen = document.getElementById("startScreen");
-const startBtn = document.getElementById("startBtn");
-startBtn.disabled = true; // disable dulu
-
-fetch("soal.json")
-  .then(r => r.json())
-  .then(d => {
-    data = d;
-    startBtn.disabled = false; // enable start setelah data siap
-  })
-  .catch(e => {
-    alert("Gagal memuat soal.json");
-    console.error(e);
-  });
-const timerBox = document.getElementById("timerBox");
-timerBox.classList.add("hidden");
-const countdown = document.getElementById("countdown");
-const countNum = document.getElementById("countNum");
-
-
-function animateQuestion(){
-  questionText.classList.remove("fade-enter","fade-enter-active");
-  answers.classList.remove("fade-enter","fade-enter-active");
-
-  void questionText.offsetWidth; // paksa reflow
-
-  questionText.classList.add("fade-enter");
-  answers.classList.add("fade-enter");
-
-  requestAnimationFrame(()=>{
-    questionText.classList.add("fade-enter-active");
-    answers.classList.add("fade-enter-active");
-  });
+function shuffle(arr){
+  for(let i=arr.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [arr[i],arr[j]]=[arr[j],arr[i]];
+  }
 }
 
-/* ===== TIMER ASLI + VISUAL ===== */
 function startTimer(){
-  clearTimeout(timer);
-  clearInterval(countdownInterval);
+  clearTimeout(timer);clearInterval(countdownInterval);
+  timerActive=true;remaining=TIME_LIMIT/1000;
+  timeNum.textContent=remaining;progressBar.style.width="100%";
 
-  timerActive = true;
-  quizBox.classList.remove("timer-warning","alarm-on");
-  timeNum.parentElement.classList.remove("danger");
-
-  remaining = TIME_LIMIT/1000;
-  timeNum.textContent = remaining;
-  progressBar.style.width="100%";
-
-  countdownInterval = setInterval(()=>{
+  countdownInterval=setInterval(()=>{
     if(!timerActive)return;
-
-    remaining--;
-    timeNum.textContent = remaining;
-    progressBar.style.width = (remaining/(TIME_LIMIT/1000))*100+"%";
-
-    progressBar.classList.remove("progress-safe","progress-warn","progress-danger");
-
-    if(remaining>10){
-      progressBar.classList.add("progress-safe");
-    }else if(remaining>5){
-      progressBar.classList.add("progress-warn");
-    }else{
-      progressBar.classList.add("progress-danger");
-    }
-
-    if(remaining>0){
-      tickSound.currentTime=0;
-      tickSound.play();
-    }
-
-    if(remaining<=5 && !quizBox.classList.contains("alarm-on")){
-      quizBox.classList.add("timer-warning","alarm-on");
-      timeNum.parentElement.classList.add("danger");
-      alarmSound.currentTime=0;
-      alarmSound.play();
-    }
-
+    remaining--;timeNum.textContent=remaining;
+    progressBar.style.width=(remaining/(TIME_LIMIT/1000))*100+"%";
+    progressBar.className="";
+    progressBar.classList.add(
+      remaining>10?"progress-safe":
+      remaining>5?"progress-warn":"progress-danger"
+    );
+    if(remaining<=5){quizBox.classList.add("timer-warning");alarmSound.play()}
     if(remaining<=0)clearInterval(countdownInterval);
   },1000);
 
@@ -419,26 +244,19 @@ function startTimer(){
 
 function pauseTimer(){
   timerActive=false;
-  clearTimeout(timer);
-  clearInterval(countdownInterval);
-  tickSound.pause();
-  alarmSound.pause();
+  clearTimeout(timer);clearInterval(countdownInterval);
 }
 
-/* ===== LOGIKA ASLI TIDAK DIUBAH ===== */
 function show(){
   const q=data[idx];
-  result.classList.remove("show");
-  questionText.innerText=`Soal ${idx+1}: ${q.question}`;
+  questionText.textContent=`Soal ${idx+1}: ${q.question}`;
   answers.innerHTML="";
-  animateQuestion();
   startTimer();
 
   currentOptions=["A","B","C","D","E"].map((l,i)=>({
     text:q["option_"+l],
     isCorrect:i===Number(q.answer_index)
   }));
-
   shuffle(currentOptions);
 
   currentOptions.forEach(opt=>{
@@ -455,84 +273,41 @@ function show(){
 function check(btn,opt){
   if(!timerActive)return;
   pauseTimer();
-
-  const q=data[idx];
   [...answers.children].forEach((b,i)=>{
     if(currentOptions[i].isCorrect)b.classList.add("correct");
     if(b===btn&&!opt.isCorrect)b.classList.add("wrong");
     b.disabled=true;
   });
-  
-  result.classList.remove("hidden");
-  requestAnimationFrame(()=>result.classList.add("show"));
-
+  result.classList.remove("hidden");result.classList.add("show");
   if(opt.isCorrect){
     correct++;score+=POINT;
-    result.innerHTML=`<div class="correct-text">✔ Jawaban Benar</div><div class="explain">${q.explanation}</div>`;
+    result.innerHTML=`<div class="correct-text">✔ Jawaban Benar</div><div class="explain">${data[idx].explanation}</div>`;
   }else{
     wrongCount++;
-    result.innerHTML=`<div class="wrong-text">✖ Jawaban Salah</div><div class="explain">${q.explanation}</div>`;
+    result.innerHTML=`<div class="wrong-text">✖ Jawaban Salah</div><div class="explain">${data[idx].explanation}</div>`;
   }
-
-  scoreNum.textContent=score;
-  cNum.textContent=correct;
-  wNum.textContent=wrongCount;
+  scoreNum.textContent=score;cNum.textContent=correct;wNum.textContent=wrongCount;
   nextBtn.classList.remove("hidden");
-  setTimeout(()=>{
-  result.scrollIntoView({
-    behavior: "smooth",
-    block: "center"
-  });
-}, 150);
 }
 
 function timeUp(){
-  pauseTimer();
-  wrongCount++;
-  const q=data[idx];
-  result.classList.remove("hidden");
-  requestAnimationFrame(()=>result.classList.add("show"));
-  result.innerHTML=`<div class="wrong-text">⏰ Waktu habis</div><div class="explain">${q.explanation}</div>`;
+  pauseTimer();wrongCount++;
+  result.classList.remove("hidden");result.classList.add("show");
+  result.innerHTML=`<div class="wrong-text">⏰ Waktu habis</div><div class="explain">${data[idx].explanation}</div>`;
   wNum.textContent=wrongCount;
   nextBtn.classList.remove("hidden");
-  setTimeout(()=>{
-  result.scrollIntoView({
-    behavior: "smooth",
-    block: "center"
-  });
-}, 150);
 }
 
-nextBtn.onclick=()=>{
-  idx++;
-  if(idx<data.length)show();
-};
-window.addEventListener("load",()=>{
-  document.body.classList.add("page-ready");
-});
-questionText.classList.remove("fade-enter-active");
-answers.classList.remove("fade-enter-active");
+nextBtn.onclick=()=>{idx++;if(idx<data.length)show()};
 
-function startCountdown(callback){
-  let n = 3;
-  countNum.textContent = n;
-
-  const cd = setInterval(()=>{
-    n--;
-    if(n >= 0) countNum.textContent = n;
-
-    if(n < 0){
-      clearInterval(cd);
-      callback(); // lanjut ke soal
-    }
-  },1000);
-}
-startBtn.onclick = () => {
+startBtn.onclick=()=>{
   startScreen.classList.add("hidden");
-  quiz.classList.remove("hidden");        // tampilkan quiz
-  timerBox.classList.remove("hidden");    // tampilkan timer
-  show();                                  // langsung mulai soal pertama
+  quiz.classList.remove("hidden");
+  timerBox.classList.remove("hidden");
+  show();
 };
+
+window.addEventListener("load",()=>document.body.classList.add("page-ready"));
 </script>
 </body>
 </html>
