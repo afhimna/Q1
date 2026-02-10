@@ -171,6 +171,9 @@ body.page-ready{opacity:1}
   transform:translateY(0);
   transition:.35s ease;
 }
+.timer-danger{
+  animation:pulseRed .6s infinite, shake .15s infinite;
+}
 </style>
 </head>
 
@@ -270,10 +273,14 @@ function startTimer(){
                        "progress-danger"
     );
 
-    if(remaining <= 5){
-      quizBox.classList.add("timer-warning");
-      alarmSound.play();
-    }
+    if(remaining <= 3){
+  quizBox.classList.remove("timer-warning");
+  quizBox.classList.add("timer-danger");
+  alarmSound.play();
+}
+else if(remaining <= 5){
+  quizBox.classList.add("timer-warning");
+}
 
     if(remaining <= 0){
       clearInterval(countdownInterval);
@@ -366,6 +373,11 @@ function check(btn,opt){
 function timeUp(){
   pauseTimer();
 
+  // 🛑 HENTIKAN SEMUA EFEK TIMER
+  quizBox.classList.remove("timer-warning","timer-danger");
+  alarmSound.pause();
+  alarmSound.currentTime = 0;
+
   /* ✅ REVIEW MODE LOG (TIMEOUT) */
   reviewLog.push({
     soal: data[idx].question,
@@ -379,8 +391,13 @@ function timeUp(){
   result.classList.remove("hidden");
   result.classList.add("show");
   setTimeout(focusResult, 200);
-  result.innerHTML=`<div class="wrong-text">⏰ Waktu habis</div><div class="explain">${data[idx].explanation}</div>`;
-  wNum.textContent=wrongCount;
+
+  result.innerHTML = `
+    <div class="wrong-text">⏰ Waktu habis</div>
+    <div class="explain">${data[idx].explanation}</div>
+  `;
+
+  wNum.textContent = wrongCount;
   nextBtn.classList.remove("hidden");
 }
 
