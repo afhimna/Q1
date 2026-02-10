@@ -192,6 +192,17 @@ body.page-ready{opacity:1}
   from{opacity:0;transform:translateY(10px)}
   to{opacity:1;transform:none}
 }
+/* ===== REVIEW OVERLAY TRANSITION ===== */
+#reviewOverlay{
+  opacity:0;
+  transform:translateY(20px) scale(.98);
+  transition:opacity .45s ease, transform .45s ease;
+}
+
+#reviewOverlay.show{
+  opacity:1;
+  transform:translateY(0) scale(1);
+}
 </style>
 </head>
 
@@ -551,8 +562,14 @@ function showReview(){
   overlay.innerHTML=html;
   document.body.appendChild(overlay);
 
+  /* ✨ AKTIFKAN TRANSISI */
+  requestAnimationFrame(()=>{
+    overlay.classList.add("show");
+  });
+
   document.getElementById("closeReview").onclick=()=>{
-    overlay.remove();
+    overlay.classList.remove("show");
+    setTimeout(()=>overlay.remove(),450);
   };
 
   overlay.scrollTo({top:0,behavior:"smooth"});
