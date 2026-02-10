@@ -174,6 +174,24 @@ body.page-ready{opacity:1}
 .timer-danger{
   animation:pulseRed .6s infinite, shake .15s infinite;
 }
+/* ===== REVIEW TRANSITION ===== */
+#reviewBox{
+  opacity:0;
+  transform:translateY(20px);
+  transition:opacity .45s ease, transform .45s ease;
+}
+
+#reviewBox.show{
+  opacity:1;
+  transform:translateY(0);
+}
+.review-item{
+  animation:fadeUp .4s ease forwards;
+}
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(10px)}
+  to{opacity:1;transform:none}
+}
 </style>
 </head>
 
@@ -193,6 +211,8 @@ body.page-ready{opacity:1}
 <div id="quiz" class="hidden">
   <div id="questionText"></div>
   <div id="answers" class="answer-buttons"></div>
+
+<div id="reviewBox" class="hidden"></div>
 
   <div class="score-board">
     Skor: <b id="scoreNum">0</b> / 100<br>
@@ -370,6 +390,29 @@ function check(btn,opt){
   nextBtn.classList.remove("hidden");
 }
 
+function showReview(){
+  const reviewBox = document.getElementById("reviewBox");
+
+  reviewBox.innerHTML = reviewLog.map((r,i)=>`
+    <div class="review-item">
+      <b>Soal ${i+1}</b><br>
+      <div>${r.soal}</div>
+      <div><b>Jawaban benar:</b> ${r.jawabanBenar}</div>
+      <div><b>Jawaban kamu:</b> ${r.jawabanUser}</div>
+      <div><i>${r.penjelasan}</i></div>
+      <hr>
+    </div>
+  `).join("");
+
+  reviewBox.classList.remove("hidden");
+
+  // ⏳ beri 1 frame agar transisi aktif
+  requestAnimationFrame(()=>{
+    reviewBox.classList.add("show");
+    reviewBox.scrollIntoView({behavior:"smooth", block:"start"});
+  });
+}
+
 function timeUp(){
   pauseTimer();
 
@@ -401,13 +444,19 @@ function timeUp(){
   nextBtn.classList.remove("hidden");
 }
 
-nextBtn.onclick=()=>{
+nextBtn.onclick = ()=>{
   idx++;
-  if(idx<data.length){
+
+  if(idx < data.length){
+    // 🔁 masih ada soal → lanjut kuis
     show();
   }else{
+    // 🛑 soal habis → tutup kuis & timer
+    quiz.classList.add("hidden");      // (opsional UX, tapi disarankan)
     nextBtn.classList.add("hidden");
     timerBox.classList.add("hidden");
+
+    // ✨ tampilkan review
     showReview();
   }
 };
