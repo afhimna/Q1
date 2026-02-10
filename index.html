@@ -209,6 +209,10 @@ body.page-ready{opacity:1}
 const POINT=5,TIME_LIMIT=20000;
 let data=[],idx=0,score=0,correct=0,wrongCount=0;
 let currentOptions=[],timer=null,timerActive=false;
+
+/* ✅ REVIEW MODE */
+let reviewLog=[];
+
 let countdownInterval=null,remaining=TIME_LIMIT/1000;
 
 const timeNum=document.getElementById("timeNum"),
@@ -264,18 +268,16 @@ function pauseTimer(){
   timerActive=false;
   clearTimeout(timer);clearInterval(countdownInterval);
 }
+
 function show(){
-  // 1️⃣ sembunyikan soal & jawaban lama
   questionText.classList.remove("show");
   answers.classList.remove("show");
   questionText.classList.add("question-fade");
   answers.classList.add("question-fade");
 
-  // 2️⃣ beri jeda agar animasi keluar terasa
   setTimeout(()=>{
     const q=data[idx];
 
-    // 3️⃣ ganti isi soal
     questionText.textContent=`Soal ${idx+1}: ${q.question}`;
     answers.innerHTML="";
     startTimer();
@@ -293,7 +295,6 @@ function show(){
       answers.appendChild(b);
     });
 
-    // 4️⃣ tampilkan soal baru
     requestAnimationFrame(()=>{
       questionText.classList.add("show");
       answers.classList.add("show");
@@ -301,20 +302,32 @@ function show(){
 
     result.classList.add("hidden");
     nextBtn.classList.add("hidden");
-
   },200);
 }
 
 function check(btn,opt){
   if(!timerActive)return;
   pauseTimer();
+
+  /* ✅ REVIEW MODE LOG (JAWABAN) */
+  reviewLog.push({
+    soal: data[idx].question,
+    jawabanBenar: data[idx]["option_" + ["A","B","C","D","E"][Number(data[idx].answer_index)]],
+    jawabanUser: opt.text,
+    status: opt.isCorrect ? "benar" : "salah",
+    penjelasan: data[idx].explanation
+  });
+
   [...answers.children].forEach((b,i)=>{
     if(currentOptions[i].isCorrect)b.classList.add("correct");
     if(b===btn&&!opt.isCorrect)b.classList.add("wrong");
     b.disabled=true;
   });
-  result.classList.remove("hidden");result.classList.add("show");
+
+  result.classList.remove("hidden");
+  result.classList.add("show");
   setTimeout(focusResult, 200);
+
   if(opt.isCorrect){
     correct++;score+=POINT;
     result.innerHTML=`<div class="correct-text">✔ Jawaban Benar</div><div class="explain">${data[idx].explanation}</div>`;
@@ -322,39 +335,100 @@ function check(btn,opt){
     wrongCount++;
     result.innerHTML=`<div class="wrong-text">✖ Jawaban Salah</div><div class="explain">${data[idx].explanation}</div>`;
   }
-  scoreNum.textContent=score;cNum.textContent=correct;wNum.textContent=wrongCount;
+
+  scoreNum.textContent=score;
+  cNum.textContent=correct;
+  wNum.textContent=wrongCount;
   nextBtn.classList.remove("hidden");
 }
 
 function timeUp(){
-  pauseTimer();wrongCount++;
-  result.classList.remove("hidden");result.classList.add("show");
+  pauseTimer();
+
+  /* ✅ REVIEW MODE LOG (TIMEOUT) */
+  reviewLog.push({
+    soal: data[idx].question,
+    jawabanBenar: data[idx]["option_" + ["A","B","C","D","E"][Number(data[idx].answer_index)]],
+    jawabanUser: "(tidak dijawab)",
+    status: "timeout",
+    penjelasan: data[idx].explanation
+  });
+
+  wrongCount++;
+  result.classList.remove("hidden");
+  result.classList.add("show");
   setTimeout(focusResult, 200);
   result.innerHTML=`<div class="wrong-text">⏰ Waktu habis</div><div class="explain">${data[idx].explanation}</div>`;
   wNum.textContent=wrongCount;
   nextBtn.classList.remove("hidden");
 }
 
-nextBtn.onclick=()=>{idx++;if(idx<data.length)show()};
+nextBtn.onclick=()=>{
+  idx++;
+  if(idx<data.length){
+    show();
+  }else{
+    nextBtn.classList.add("hidden");
+    timerBox.classList.add("hidden");
+    showReview();
+  }
+};
 
 startBtn.onclick=()=>{
   startScreen.classList.add("hidden");
   quiz.classList.remove("hidden");
   quiz.classList.add("fade-scale");
-  requestAnimationFrame(()=>{
-  quiz.classList.add("show");
-});
+  requestAnimationFrame(()=>quiz.classList.add("show"));
   timerBox.classList.remove("hidden");
   show();
 };
 
 window.addEventListener("load",()=>document.body.classList.add("page-ready"));
+
 function focusResult(){
-  result.scrollIntoView({
-    behavior: "smooth",
-    block: "start"
-  });
+  result.scrollIntoView({behavior:"smooth",block:"start"});
 }
+function showReview(){
+  const reviewBox=document.createElement("div");
+  reviewBox.id="reviewBox";
+  reviewBox.className="review-box show";
+
+  let html=`<h2>📋 Review Jawaban</h2>`;
+
+  reviewLog.forEach((r,i)=>{
+    html+=`
+      <div class="review-item ${r.status}">
+        <div class="review-question">
+          ${i+1}. ${r.soal}
+        </div>
+        <div class="review-answer user">
+          Jawaban kamu: <b>${r.jawabanUser}</b>
+        </div>
+        <div class="review-answer correct">
+          Jawaban benar: <b>${r.jawabanBenar}</b>
+        </div>
+        <div class="review-status">
+          Status: <b>${r.status.toUpperCase()}</b>
+        </div>
+        <div class="review-explain">
+          ${r.penjelasan}
+        </div>
+      </div>
+    `;
+  });
+
+  reviewBox.innerHTML=html;
+  quiz.appendChild(reviewBox);
+
+  // 🎯 fokus scroll ke review
+  setTimeout(()=>{
+    reviewBox.scrollIntoView({
+      behavior:"smooth",
+      block:"start"
+    });
+  },200);
+}
+
 </script>
 </body>
 </html>
