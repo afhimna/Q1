@@ -153,6 +153,24 @@ body.page-ready{opacity:1}
   cursor:pointer;
 }
 #startBtn:hover{background:#16a34a}
+.fade-scale{
+  opacity:0;
+  transform:scale(.96) translateY(10px);
+  transition:.45s ease;
+}
+.fade-scale.show{
+  opacity:1;
+  transform:scale(1) translateY(0);
+}
+.question-fade{
+  opacity:0;
+  transform:translateY(12px);
+}
+.question-fade.show{
+  opacity:1;
+  transform:translateY(0);
+  transition:.35s ease;
+}
 </style>
 </head>
 
@@ -246,28 +264,45 @@ function pauseTimer(){
   timerActive=false;
   clearTimeout(timer);clearInterval(countdownInterval);
 }
-
 function show(){
-  const q=data[idx];
-  questionText.textContent=`Soal ${idx+1}: ${q.question}`;
-  answers.innerHTML="";
-  startTimer();
+  // 1️⃣ sembunyikan soal & jawaban lama
+  questionText.classList.remove("show");
+  answers.classList.remove("show");
+  questionText.classList.add("question-fade");
+  answers.classList.add("question-fade");
 
-  currentOptions=["A","B","C","D","E"].map((l,i)=>({
-    text:q["option_"+l],
-    isCorrect:i===Number(q.answer_index)
-  }));
-  shuffle(currentOptions);
+  // 2️⃣ beri jeda agar animasi keluar terasa
+  setTimeout(()=>{
+    const q=data[idx];
 
-  currentOptions.forEach(opt=>{
-    const b=document.createElement("button");
-    b.textContent=opt.text;
-    b.onclick=()=>check(b,opt);
-    answers.appendChild(b);
-  });
+    // 3️⃣ ganti isi soal
+    questionText.textContent=`Soal ${idx+1}: ${q.question}`;
+    answers.innerHTML="";
+    startTimer();
 
-  result.classList.add("hidden");
-  nextBtn.classList.add("hidden");
+    currentOptions=["A","B","C","D","E"].map((l,i)=>({
+      text:q["option_"+l],
+      isCorrect:i===Number(q.answer_index)
+    }));
+    shuffle(currentOptions);
+
+    currentOptions.forEach(opt=>{
+      const b=document.createElement("button");
+      b.textContent=opt.text;
+      b.onclick=()=>check(b,opt);
+      answers.appendChild(b);
+    });
+
+    // 4️⃣ tampilkan soal baru
+    requestAnimationFrame(()=>{
+      questionText.classList.add("show");
+      answers.classList.add("show");
+    });
+
+    result.classList.add("hidden");
+    nextBtn.classList.add("hidden");
+
+  },150);
 }
 
 function check(btn,opt){
@@ -303,6 +338,10 @@ nextBtn.onclick=()=>{idx++;if(idx<data.length)show()};
 startBtn.onclick=()=>{
   startScreen.classList.add("hidden");
   quiz.classList.remove("hidden");
+  quiz.classList.add("fade-scale");
+  requestAnimationFrame(()=>{
+  quiz.classList.add("show");
+});
   timerBox.classList.remove("hidden");
   show();
 };
