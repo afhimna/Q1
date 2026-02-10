@@ -244,24 +244,45 @@ function shuffle(arr){
 }
 
 function startTimer(){
-  clearTimeout(timer);clearInterval(countdownInterval);
-  timerActive=true;remaining=TIME_LIMIT/1000;
-  timeNum.textContent=remaining;progressBar.style.width="100%";
+  // 🔄 reset kondisi visual timer (soal baru = normal)
+  quizBox.classList.remove("timer-warning");
+  alarmSound.pause();
+  alarmSound.currentTime = 0;
 
-  countdownInterval=setInterval(()=>{
-    if(!timerActive)return;
-    remaining--;timeNum.textContent=remaining;
-    progressBar.style.width=(remaining/(TIME_LIMIT/1000))*100+"%";
-    progressBar.className="";
+  clearTimeout(timer);
+  clearInterval(countdownInterval);
+
+  timerActive = true;
+  remaining = TIME_LIMIT / 1000;
+  timeNum.textContent = remaining;
+  progressBar.style.width = "100%";
+
+  countdownInterval = setInterval(()=>{
+    if(!timerActive) return;
+
+    remaining--;
+    timeNum.textContent = remaining;
+    progressBar.style.width = (remaining / (TIME_LIMIT/1000)) * 100 + "%";
+    progressBar.className = "";
     progressBar.classList.add(
-      remaining>10?"progress-safe":
-      remaining>5?"progress-warn":"progress-danger"
+      remaining > 10 ? "progress-safe" :
+      remaining > 5  ? "progress-warn" :
+                       "progress-danger"
     );
-    if(remaining<=5){quizBox.classList.add("timer-warning");alarmSound.play()}
-    if(remaining<=0)clearInterval(countdownInterval);
-  },1000);
 
-  timer=setTimeout(()=>{if(timerActive)timeUp()},TIME_LIMIT);
+    if(remaining <= 5){
+      quizBox.classList.add("timer-warning");
+      alarmSound.play();
+    }
+
+    if(remaining <= 0){
+      clearInterval(countdownInterval);
+    }
+  }, 1000);
+
+  timer = setTimeout(()=>{
+    if(timerActive) timeUp();
+  }, TIME_LIMIT);
 }
 
 function pauseTimer(){
