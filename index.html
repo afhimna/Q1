@@ -203,6 +203,37 @@ body.page-ready{opacity:1}
   opacity:1;
   transform:translateY(0) scale(1);
 }
+/* ===== COUNTDOWN OVERLAY ===== */
+#countdownOverlay{
+  position:fixed;
+  inset:0;
+  background:rgba(2,6,23,.98);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  z-index:9999;
+  opacity:0;
+  transition:opacity .4s ease;
+}
+
+#countdownOverlay.show{
+  opacity:1;
+}
+
+#countdownNum{
+  font-size:6rem;
+  font-weight:bold;
+  color:#22c55e;
+  transform:scale(.7);
+  opacity:0;
+  animation:countPop 1s ease forwards;
+}
+
+@keyframes countPop{
+  0%{opacity:0;transform:scale(.6)}
+  40%{opacity:1;transform:scale(1.1)}
+  100%{opacity:1;transform:scale(1)}
+}
 </style>
 </head>
 
@@ -474,11 +505,14 @@ nextBtn.onclick = ()=>{
 
 startBtn.onclick=()=>{
   startScreen.classList.add("hidden");
-  quiz.classList.remove("hidden");
-  quiz.classList.add("fade-scale");
-  requestAnimationFrame(()=>quiz.classList.add("show"));
-  timerBox.classList.remove("hidden");
-  show();
+
+  startCountdown(()=>{
+    quiz.classList.remove("hidden");
+    quiz.classList.add("fade-scale");
+    requestAnimationFrame(()=>quiz.classList.add("show"));
+    timerBox.classList.remove("hidden");
+    show();
+  });
 };
 
 window.addEventListener("load",()=>document.body.classList.add("page-ready"));
@@ -573,6 +607,41 @@ function showReview(){
   };
 
   overlay.scrollTo({top:0,behavior:"smooth"});
+}
+function startCountdown(onFinish){
+  const overlay=document.createElement("div");
+  overlay.id="countdownOverlay";
+
+  const num=document.createElement("div");
+  num.id="countdownNum";
+
+  overlay.appendChild(num);
+  document.body.appendChild(overlay);
+
+  let count=3;
+
+  requestAnimationFrame(()=>overlay.classList.add("show"));
+
+  const run=()=>{
+    num.textContent = count > 0 ? count : "Mulai";
+    num.style.animation="none";
+    num.offsetHeight; // reset animation
+    num.style.animation="countPop 1s ease forwards";
+
+    if(count < 0){
+      overlay.classList.remove("show");
+      setTimeout(()=>{
+        overlay.remove();
+        onFinish();
+      },400);
+      return;
+    }
+
+    count--;
+    setTimeout(run,1000);
+  };
+
+  run();
 }
 </script>
 </body>
