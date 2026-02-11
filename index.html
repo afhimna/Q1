@@ -294,6 +294,16 @@ body.page-ready{opacity:1}
   color:#020617;
 }
 #shareBtn:hover{background:#ca8a04}
+.review-item{
+  opacity:0;
+  transform:translateY(25px);
+  transition:opacity .5s ease, transform .5s ease;
+}
+
+.review-item.show{
+  opacity:1;
+  transform:translateY(0);
+}
 </style>
 </head>
 
@@ -611,14 +621,14 @@ function showReview(){
       "#ef4444";
 
     html+=`
-      <div style="
-        background:#020617;
-        border:1px solid #334155;
-        border-left:6px solid ${color};
-        border-radius:16px;
-        padding:16px;
-        margin-bottom:16px;
-      ">
+      <div class="review-item" style="
+      background:#020617;
+      border:1px solid #334155;
+      border-left:6px solid ${color};
+      border-radius:16px;
+      padding:16px;
+      margin-bottom:16px;
+">
         <div style="font-weight:bold;margin-bottom:8px">
           ${i+1}. ${r.soal}
         </div>
@@ -659,6 +669,23 @@ function showReview(){
 
   overlay.innerHTML=html;
   document.body.appendChild(overlay);
+  // 🔥 Scroll Reveal Effect
+const items = overlay.querySelectorAll(".review-item");
+
+const observer = new IntersectionObserver((entries)=>{
+  entries.forEach(entry=>{
+    if(entry.isIntersecting){
+      entry.target.classList.add("show");
+      observer.unobserve(entry.target);
+    }
+  });
+},{
+  threshold:0.2
+});
+
+items.forEach(item=>{
+  observer.observe(item);
+});
 
   /* ✨ AKTIFKAN TRANSISI */
   requestAnimationFrame(()=>{
