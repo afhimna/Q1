@@ -234,6 +234,34 @@ body.page-ready{opacity:1}
   40%{opacity:1;transform:scale(1.1)}
   100%{opacity:1;transform:scale(1)}
 }
+/* ===== GLOBAL SUMMARY ===== */
+#finalBox{
+  margin-top:24px;
+  padding:22px;
+  background:#020617;
+  border:1px solid #334155;
+  border-radius:20px;
+  text-align:center;
+
+  opacity:0;
+  transform:translateY(20px) scale(.98);
+  transition:opacity .5s ease, transform .5s ease;
+}
+
+#finalBox.show{
+  opacity:1;
+  transform:translateY(0) scale(1);
+}
+
+.final-message{
+  margin-top:16px;
+  padding:14px;
+  border-left:4px solid #38bdf8;
+  background:#020617;
+  border-radius:12px;
+  font-style:italic;
+  line-height:1.6;
+}
 </style>
 </head>
 
@@ -263,6 +291,18 @@ body.page-ready{opacity:1}
 
   <div id="result" class="hidden"></div>
   <button id="nextBtn" class="hidden">Soal Selanjutnya</button>
+</div>
+<div id="finalBox" class="hidden">
+  <h3>📊 Ringkasan Akhir</h3>
+
+  <div class="final-content">
+    Skor: <b id="finalScore">0</b> / 100<br>
+    Benar: <span id="finalCorrect">0</span><br>
+    Salah: <span id="finalWrong">0</span><br>
+    Persentase: <span id="finalPercent">0</span>%
+  </div>
+
+  <div id="finalMessage" class="final-message"></div>
 </div>
 
 </div>
@@ -432,29 +472,6 @@ function check(btn,opt){
   nextBtn.classList.remove("hidden");
 }
 
-function showReview(){
-  const reviewBox = document.getElementById("reviewBox");
-
-  reviewBox.innerHTML = reviewLog.map((r,i)=>`
-    <div class="review-item">
-      <b>Soal ${i+1}</b><br>
-      <div>${r.soal}</div>
-      <div><b>Jawaban benar:</b> ${r.jawabanBenar}</div>
-      <div><b>Jawaban kamu:</b> ${r.jawabanUser}</div>
-      <div><i>${r.penjelasan}</i></div>
-      <hr>
-    </div>
-  `).join("");
-
-  reviewBox.classList.remove("hidden");
-
-  // ⏳ beri 1 frame agar transisi aktif
-  requestAnimationFrame(()=>{
-    reviewBox.classList.add("show");
-    reviewBox.scrollIntoView({behavior:"smooth", block:"start"});
-  });
-}
-
 function timeUp(){
   pauseTimer();
 
@@ -600,11 +617,19 @@ function showReview(){
   requestAnimationFrame(()=>{
     overlay.classList.add("show");
   });
-
+  
   document.getElementById("closeReview").onclick=()=>{
-    overlay.classList.remove("show");
-    setTimeout(()=>overlay.remove(),450);
-  };
+
+  overlay.classList.remove("show");
+
+  setTimeout(()=>{
+    overlay.remove();
+
+    // 🔽 TAMBAHKAN INI
+    showGlobalSummary();
+
+  },450);
+};
 
   overlay.scrollTo({top:0,behavior:"smooth"});
 }
@@ -643,6 +668,44 @@ function startCountdown(onFinish){
 
   run();
 }
+function getFinalMessage(percent){
+  if(percent === 100){
+    return "MasyaAllah, semua jawaban benar. Penguasaan materi sangat ممتاز.";
+  }
+  if(percent >= 75){
+    return "Hasil sangat baik. Tinggal sedikit penguatan untuk mencapai kesempurnaan.";
+  }
+  if(percent >= 50){
+    return "Cukup baik. Perlu pengulangan agar pemahaman semakin kokoh.";
+  }
+  if(percent >= 25){
+    return "Masih perlu latihan. Jangan menyerah, perbaiki dan ulangi kembali.";
+  }
+  return "Jangan berkecil hati. Setiap kesalahan adalah jalan menuju ilmu.";
+}
+function showGlobalSummary(){
+
+  const total = correct + wrongCount;
+  const percent = total === 0 ? 0 : Math.round((correct / total) * 100);
+
+  document.getElementById("finalScore").textContent = score;
+  document.getElementById("finalCorrect").textContent = correct;
+  document.getElementById("finalWrong").textContent = wrongCount;
+  document.getElementById("finalPercent").textContent = percent;
+
+  document.getElementById("finalMessage").textContent =
+    getFinalMessage(percent);
+
+  const box = document.getElementById("finalBox");
+  box.classList.remove("hidden");
+
+  requestAnimationFrame(()=>{
+    box.classList.add("show");
+  });
+
+  box.scrollIntoView({behavior:"smooth",block:"center"});
+}
+
 </script>
 </body>
 </html>
