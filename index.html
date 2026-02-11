@@ -679,10 +679,22 @@ reviewLog.forEach((r,i)=>{
 
   container.appendChild(card);
 
-  // ✨ Animasi muncul bertahap
-  setTimeout(()=>{
-    card.classList.add("show");
-  }, i * 500);
+});
+// 👁 Observer animasi saat card masuk layar
+const observer = new IntersectionObserver((entries)=>{
+  entries.forEach(entry=>{
+    if(entry.isIntersecting){
+      entry.target.classList.add("show"); // aktifkan animasi
+      observer.unobserve(entry.target);   // berhenti observe setelah muncul
+    }
+  });
+},{
+  threshold: 0.2 // muncul saat 20% card terlihat
+});
+
+// daftarkan semua card ke observer
+container.querySelectorAll(".review-card").forEach(card=>{
+  observer.observe(card);
 });
 
   /* ✨ AKTIFKAN TRANSISI */
@@ -796,22 +808,23 @@ document.addEventListener("click",function(e){
     location.reload();
   }
 
-});
-if(e.target.id === "explainBtn"){
-  alert("Halaman penjelasan tambahan akan segera tersedia.");
-}
-if(e.target.id === "shareBtn"){
-  const percent = document.getElementById("finalPercent").textContent;
-  const text = `Saya mendapat skor ${percent}% di Kuis Nahwu!`;
+  if(e.target.id === "explainBtn"){
+    alert("Halaman penjelasan tambahan akan segera tersedia.");
+  }
 
-  if(navigator.share){
-    navigator.share({
-      title: "Kuis Nahwu",
-      text: text,
-      url: window.location.href
-    });
-  }else{
-    alert("Fitur share tidak didukung di perangkat ini.");
+  if(e.target.id === "shareBtn"){
+    const percent = document.getElementById("finalPercent").textContent;
+    const text = `Saya mendapat skor ${percent}% di Kuis Nahwu!`;
+
+    if(navigator.share){
+      navigator.share({
+        title: "Kuis Nahwu",
+        text: text,
+        url: window.location.href
+      });
+    }else{
+      alert("Fitur share tidak didukung di perangkat ini.");
+    }
   }
 }
 </script>
