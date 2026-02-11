@@ -294,6 +294,16 @@ body.page-ready{opacity:1}
   color:#020617;
 }
 #shareBtn:hover{background:#ca8a04}
+.review-card {
+  opacity: 0;
+  transform: translateY(20px) scale(.98);
+  transition: all .4s ease;
+}
+
+.review-card.show {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
 </style>
 </head>
 
@@ -598,47 +608,15 @@ function showReview(){
   `;
 
   let html=`
-    <div style="max-width:720px;margin:auto">
-      <h2 style="text-align:center;margin-bottom:20px">
-        📋 Review Jawaban
-      </h2>
-  `;
+  <div style="max-width:720px;margin:auto">
+    <h2 style="text-align:center;margin-bottom:20px">
+      📋 Review Jawaban
+    </h2>
 
-  reviewLog.forEach((r,i)=>{
-    const color=
-      r.status==="benar" ? "#22c55e" :
-      r.status==="timeout" ? "#eab308" :
-      "#ef4444";
+    <div class="review-container"></div>
+`;
 
-    html+=`
-      <div style="
-        background:#020617;
-        border:1px solid #334155;
-        border-left:6px solid ${color};
-        border-radius:16px;
-        padding:16px;
-        margin-bottom:16px;
-      ">
-        <div style="font-weight:bold;margin-bottom:8px">
-          ${i+1}. ${r.soal}
-        </div>
-        <div>Jawaban kamu: <b>${r.jawabanUser}</b></div>
-        <div>Jawaban benar: <b>${r.jawabanBenar}</b></div>
-        <div style="margin:6px 0;color:${color}">
-          Status: ${r.status.toUpperCase()}
-        </div>
-        <div style="
-          margin-top:10px;
-          padding:12px;
-          background:#020617;
-          border-left:4px solid #38bdf8;
-          border-radius:10px
-        ">
-          ${r.penjelasan}
-        </div>
-      </div>
-    `;
-  });
+
 
   html+=`
       <button id="closeReview"
@@ -659,6 +637,53 @@ function showReview(){
 
   overlay.innerHTML=html;
   document.body.appendChild(overlay);
+  const container = overlay.querySelector(".review-container");
+
+reviewLog.forEach((r,i)=>{
+  const color =
+    r.status==="benar" ? "#22c55e" :
+    r.status==="timeout" ? "#eab308" :
+    "#ef4444";
+
+  const card = document.createElement("div");
+  card.className = "review-card";
+
+  card.style.cssText = `
+    background:#020617;
+    border:1px solid #334155;
+    border-left:6px solid ${color};
+    border-radius:16px;
+    padding:16px;
+    margin-bottom:16px;
+  `;
+
+  card.innerHTML = `
+    <div style="font-weight:bold;margin-bottom:8px">
+      ${i+1}. ${r.soal}
+    </div>
+    <div>Jawaban kamu: <b>${r.jawabanUser}</b></div>
+    <div>Jawaban benar: <b>${r.jawabanBenar}</b></div>
+    <div style="margin:6px 0;color:${color}">
+      Status: ${r.status.toUpperCase()}
+    </div>
+    <div style="
+      margin-top:10px;
+      padding:12px;
+      background:#020617;
+      border-left:4px solid #38bdf8;
+      border-radius:10px
+    ">
+      ${r.penjelasan}
+    </div>
+  `;
+
+  container.appendChild(card);
+
+  // ✨ Animasi muncul bertahap
+  setTimeout(()=>{
+    card.classList.add("show");
+  }, i * 200);
+});
 
   /* ✨ AKTIFKAN TRANSISI */
   requestAnimationFrame(()=>{
