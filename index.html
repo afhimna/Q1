@@ -328,11 +328,12 @@ body.page-ready{opacity:1}
   <h3>📊 Ringkasan Akhir</h3>
 
   <div class="final-content">
-    Skor: <b id="finalScore">0</b> / 100<br>
-    Benar: <span id="finalCorrect">0</span><br>
-    Salah: <span id="finalWrong">0</span><br>
-    Persentase: <span id="finalPercent">0</span>%
-  </div>
+  Skor: <b id="finalScore">0</b> / 100<br>
+  Benar: <span id="finalCorrect">0</span><br>
+  Salah: <span id="finalWrong">0</span><br>
+  Persentase: <span id="finalPercent">0</span>%<br>
+  Waktu Penyelesaian: <span id="finalTime">0:00</span>
+</div>
 
   <div id="finalMessage" class="final-message"></div>
   <div class="final-actions">
@@ -351,6 +352,11 @@ body.page-ready{opacity:1}
 const POINT=5,TIME_LIMIT=20000;
 let data=[],idx=0,score=0,correct=0,wrongCount=0;
 let currentOptions=[],timer=null,timerActive=false;
+
+/* ⏱ GLOBAL QUIZ TIMER */
+let quizStartTime = null;
+let quizEndTime = null;
+let quizDuration = 0; // dalam detik
 
 /* ✅ REVIEW MODE */
 let reviewLog=[];
@@ -561,12 +567,16 @@ startBtn.onclick=()=>{
   startScreen.classList.add("hidden");
 
   startCountdown(()=>{
-    quiz.classList.remove("hidden");
-    quiz.classList.add("fade-scale");
-    requestAnimationFrame(()=>quiz.classList.add("show"));
-    timerBox.classList.remove("hidden");
-    show();
-  });
+
+  // ⏱ MULAI GLOBAL TIMER DI SINI
+  quizStartTime = Date.now();
+
+  quiz.classList.remove("hidden");
+  quiz.classList.add("fade-scale");
+  requestAnimationFrame(()=>quiz.classList.add("show"));
+  timerBox.classList.remove("hidden");
+  show();
+});
 };
 
 window.addEventListener("load",()=>document.body.classList.add("page-ready"));
@@ -660,9 +670,15 @@ function showReview(){
   overlay.classList.remove("show");
 
   setTimeout(()=>{
+
     overlay.remove();
 
-    // 🔽 TAMBAHKAN INI
+    // ⏱ AKHIRI GLOBAL TIMER
+    quizEndTime = Date.now();
+
+    // hitung durasi dalam detik
+    quizDuration = Math.floor((quizEndTime - quizStartTime) / 1000);
+
     showGlobalSummary();
 
   },450);
@@ -729,6 +745,13 @@ function showGlobalSummary(){
   document.getElementById("finalCorrect").textContent = correct;
   document.getElementById("finalWrong").textContent = wrongCount;
   document.getElementById("finalPercent").textContent = percent;
+  // ⏱ FORMAT WAKTU MENIT:DETIK
+const minutes = Math.floor(quizDuration / 60);
+const seconds = quizDuration % 60;
+
+const formattedTime = minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
+
+document.getElementById("finalTime").textContent = formattedTime;
 
   document.getElementById("finalMessage").textContent =
     getFinalMessage(percent);
