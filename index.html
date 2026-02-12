@@ -406,7 +406,45 @@ body.page-ready{opacity:1}
   </div>
 </div>
 </div>
+<!-- ===== PRO SHARE CARD (HIDDEN) ===== -->
+<div id="proShareCard" style="
+  width:360px;
+  height:640px;
+  padding:30px;
+  background:linear-gradient(180deg,#020617,#0f172a);
+  border-radius:30px;
+  color:white;
+  font-family:Arial;
+  display:none;
+  position:fixed;
+  left:-9999px;
+  box-sizing:border-box;
+">
 
+  <h2 style="text-align:center;margin-bottom:30px">
+    📊 HASIL KUIS NAHWU
+  </h2>
+
+  <div style="font-size:20px;line-height:1.8">
+    <p>Skor: <b id="proScore"></b></p>
+    <p>Benar: <b id="proCorrect"></b></p>
+    <p>Salah: <b id="proWrong"></b></p>
+    <p>Persentase: <b id="proPercent"></b>%</p>
+    <p>Waktu: <b id="proTime"></b></p>
+  </div>
+
+  <div style="
+    position:absolute;
+    bottom:20px;
+    left:0;
+    right:0;
+    text-align:center;
+    font-size:14px;
+    opacity:.6;
+  ">
+    © 2026 Afhimna Dev
+  </div>
+</div>
 <audio id="tickSound" src="tick.mp3" preload="auto"></audio>
 <audio id="alarmSound" src="alarm.mp3" preload="auto"></audio>
 
@@ -824,6 +862,12 @@ function showGlobalSummary(){
   document.getElementById("finalCorrect").textContent = correct;
   document.getElementById("finalWrong").textContent = wrongCount;
   document.getElementById("finalPercent").textContent = percent;
+  // ===== ISI DATA KE PRO SHARE CARD =====
+document.getElementById("proScore").textContent = score;
+document.getElementById("proCorrect").textContent = correct;
+document.getElementById("proWrong").textContent = wrongCount;
+document.getElementById("proPercent").textContent = percent;
+document.getElementById("proTime").textContent = formattedTime;
   // ⏱ FORMAT WAKTU MENIT:DETIK
 const minutes = Math.floor(quizDuration / 60);
 const seconds = quizDuration % 60;
@@ -882,19 +926,60 @@ if(e.target.id === "explainBtn"){
   alert("www.google.com");
 }
 if(e.target.id === "shareBtn"){
-  const percent = document.getElementById("finalPercent").textContent;
-  const text = `Saya mendapat skor ${percent}% di Kuis Nahwu!`;
 
-  if(navigator.share){
-    navigator.share({
-      title: "Kuis Nahwu",
-      text: text,
-      url: window.location.href
+  generateProImage(blob => {
+
+    const file = new File([blob], "hasil-kuis-nahwu.png", {
+      type: "image/png"
     });
-  }else{
-    alert("Fitur share tidak didukung di perangkat ini.");
-  }
+
+    const percent = document.getElementById("finalPercent").textContent;
+    const shareText = `Saya mendapat ${percent}% di Kuis Nahwu!`;
+
+    if(navigator.share && navigator.canShare({ files: [file] })){
+
+      navigator.share({
+        title: "Hasil Kuis Nahwu",
+        text: shareText,
+        files: [file]
+      });
+
+    }else{
+
+      // fallback jika browser tidak support
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "hasil-kuis-nahwu.png";
+      a.click();
+
+      alert("Gambar diunduh. Silakan bagikan secara manual.");
+    }
+
+  });
+
+}
+// ===== GENERATE PRO SHARE IMAGE =====
+function generateProImage(callback){
+
+  const card = document.getElementById("proShareCard");
+
+  // tampilkan sementara
+  card.style.display = "block";
+
+  html2canvas(card, { scale: 2 }).then(canvas => {
+
+    // sembunyikan kembali
+    card.style.display = "none";
+
+    canvas.toBlob(blob => {
+      callback(blob);
+    });
+
+  });
+
 }
 </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </body>
 </html>
