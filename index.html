@@ -1011,15 +1011,7 @@ async function generateProImage(callback){
       motivation = "Jangan berhenti menuntut ilmu.";
     }
 
-    // =========================
-    // LIGHT BEAM EFFECT
-    // =========================
-    const beam = ctx.createLinearGradient(centerX, 0, centerX, h*0.6);
-    beam.addColorStop(0, "rgba(255,255,255,0.5)");
-    beam.addColorStop(1, "rgba(255,255,255,0)");
-    ctx.fillStyle = beam;
-    ctx.fillRect(centerX-120, 0, 240, h*0.6);
-    ctx.font = "120px Bokor"; 
+    ctx.font = "100px Bokor"; 
     ctx.fillStyle = "#e5e7eb";
     ctx.textAlign = "left"; // rata kiri
     ctx.fillText("HASIL KUIS AFHIMNA", 20, h * 0.12);
@@ -1061,15 +1053,15 @@ async function generateProImage(callback){
     ctx.fillText("Waktu Selesai  : " + waktu, leftX, h*0.65);
 
 
-    ctx.font = "30px Bokor";
+    ctx.font = "70px Bokor";
     ctx.textAlign = "left";
     ctx.fillStyle = "#ffffff";
-    ctx.fillText("Ikuti kuisnya sekarang", leftX, h*0.92);
+    ctx.fillText("Ikuti kuisnya sekarang", leftX, h*0.80);
 
-    ctx.font = "30px Bokor";
+    ctx.font = "70px Bokor";
     ctx.textAlign = "left";
     ctx.fillStyle = "#aaaaaa";
-    ctx.fillText("afhimna.github.io/home", leftX, h*0.95);
+    ctx.fillText("afhimna.github.io/home", leftX, h*0.85);
 
     canvas.toBlob(blob => callback(blob), "image/png", 1.0);
   };
