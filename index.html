@@ -447,7 +447,7 @@ body.page-ready{opacity:1}
 </div>
 <audio id="tickSound" src="tick.mp3" preload="auto"></audio>
 <audio id="alarmSound" src="alarm.mp3" preload="auto"></audio>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
 const POINT=5,TIME_LIMIT=20000;
 let data=[],idx=0,score=0,correct=0,wrongCount=0;
@@ -858,23 +858,23 @@ function showGlobalSummary(){
   const total = correct + wrongCount;
   const percent = total === 0 ? 0 : Math.round((correct / total) * 100);
 
+  // ⏱ FORMAT WAKTU DULU
+  const minutes = Math.floor(quizDuration / 60);
+  const seconds = quizDuration % 60;
+  const formattedTime = minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
+
   document.getElementById("finalScore").textContent = score;
   document.getElementById("finalCorrect").textContent = correct;
   document.getElementById("finalWrong").textContent = wrongCount;
   document.getElementById("finalPercent").textContent = percent;
+  document.getElementById("finalTime").textContent = formattedTime;
+
   // ===== ISI DATA KE PRO SHARE CARD =====
-document.getElementById("proScore").textContent = score;
-document.getElementById("proCorrect").textContent = correct;
-document.getElementById("proWrong").textContent = wrongCount;
-document.getElementById("proPercent").textContent = percent;
-document.getElementById("proTime").textContent = formattedTime;
-  // ⏱ FORMAT WAKTU MENIT:DETIK
-const minutes = Math.floor(quizDuration / 60);
-const seconds = quizDuration % 60;
-
-const formattedTime = minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
-
-document.getElementById("finalTime").textContent = formattedTime;
+  document.getElementById("proScore").textContent = score;
+  document.getElementById("proCorrect").textContent = correct;
+  document.getElementById("proWrong").textContent = wrongCount;
+  document.getElementById("proPercent").textContent = percent;
+  document.getElementById("proTime").textContent = formattedTime;
 
   document.getElementById("finalMessage").textContent =
     getFinalMessage(percent);
@@ -893,11 +893,6 @@ document.addEventListener("click",function(e){
 const shareText = encodeURIComponent(
   `Saya mendapat skor ${percent}% di Kuis Nahwu! Coba juga di sini: ${window.location.href}`
 );
-
-// 1️⃣ Buka panel
-if(e.target.id === "shareBtn"){
-  document.getElementById("sharePanel").classList.add("active");
-}
 
 // 2️⃣ WhatsApp
 if(e.target.id === "shareWa"){
@@ -980,6 +975,5 @@ function generateProImage(callback){
 
 }
 </script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </body>
 </html>
