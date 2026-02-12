@@ -889,71 +889,72 @@ function showGlobalSummary(){
 
   box.scrollIntoView({behavior:"smooth",block:"center"});
 }
-document.addEventListener("click",function(e){
+document.addEventListener("click", function(e){
+
   const percent = document.getElementById("finalPercent")?.textContent || "";
-const shareText = encodeURIComponent(
-  `Saya mendapat skor ${percent}% di Kuis Nahwu! Coba juga di sini: ${window.location.href}`
-);
+  const shareText = encodeURIComponent(
+    `Saya mendapat skor ${percent}% di Kuis Nahwu! Coba juga di sini: ${window.location.href}`
+  );
 
-// 2️⃣ WhatsApp
-if(e.target.id === "shareWa"){
-  window.open(`https://wa.me/?text=${shareText}`, "_blank");
-  document.getElementById("sharePanel").classList.remove("active");
-}
+  // ===== WHATSAPP =====
+  if(e.target.id === "shareWa"){
+    window.open(`https://wa.me/?text=${shareText}`, "_blank");
+    document.getElementById("sharePanel").classList.remove("active");
+  }
 
-// 3️⃣ Facebook
-if(e.target.id === "shareFb"){
-  window.open(`https://www.facebook.com/sharer/sharer.php?u=${window.location.href}`, "_blank");
-  document.getElementById("sharePanel").classList.remove("active");
-}
+  // ===== FACEBOOK =====
+  if(e.target.id === "shareFb"){
+    window.open(`https://www.facebook.com/sharer/sharer.php?u=${window.location.href}`, "_blank");
+    document.getElementById("sharePanel").classList.remove("active");
+  }
 
-// 4️⃣ Instagram
-if(e.target.id === "shareIg"){
-  alert("Instagram tidak mendukung share langsung via web.");
-  document.getElementById("sharePanel").classList.remove("active");
-}
+  // ===== INSTAGRAM =====
+  if(e.target.id === "shareIg"){
+    alert("Instagram tidak mendukung share langsung via web.");
+    document.getElementById("sharePanel").classList.remove("active");
+  }
 
+  // ===== RETRY =====
   if(e.target.id === "retryBtn"){
     location.reload();
   }
 
-});
-if(e.target.id === "explainBtn"){
-  alert("www.google.com");
-}
-if(e.target.id === "shareBtn"){
+  // ===== PENJELASAN TAMBAHAN =====
+  if(e.target.id === "explainBtn"){
+    window.open("https://www.google.com", "_blank");
+  }
 
-  generateProImage(blob => {
+  // ===== SHARE PRO IMAGE =====
+  if(e.target.id === "shareBtn"){
 
-    const file = new File([blob], "hasil-kuis-nahwu.png", {
-      type: "image/png"
-    });
+    generateProImage(blob => {
 
-    const percent = document.getElementById("finalPercent").textContent;
-    const shareText = `Saya mendapat ${percent}% di Kuis Nahwu!`;
-
-    if(navigator.share && navigator.canShare({ files: [file] })){
-
-      navigator.share({
-        title: "Hasil Kuis Nahwu",
-        text: shareText,
-        files: [file]
+      const file = new File([blob], "hasil-kuis-nahwu.png", {
+        type: "image/png"
       });
 
-    }else{
+      const shareText = `Saya mendapat ${percent}% di Kuis Nahwu!`;
 
-      // fallback jika browser tidak support
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "hasil-kuis-nahwu.png";
-      a.click();
+      if(navigator.share && navigator.canShare({ files: [file] })){
 
-      alert("Gambar diunduh. Silakan bagikan secara manual.");
-    }
+        navigator.share({
+          title: "Hasil Kuis Nahwu",
+          text: shareText,
+          files: [file]
+        });
 
-  });
+      }else{
 
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "hasil-kuis-nahwu.png";
+        a.click();
+
+        alert("Gambar diunduh. Silakan bagikan secara manual.");
+      }
+
+    });
 }
 // ===== GENERATE PRO SHARE IMAGE =====
 function generateProImage(callback){
