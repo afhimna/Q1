@@ -858,26 +858,27 @@ function showGlobalSummary(){
   const total = correct + wrongCount;
   const percent = total === 0 ? 0 : Math.round((correct / total) * 100);
 
-  // ⏱ FORMAT WAKTU DULU
+  // ⏱ FORMAT WAKTU MENIT:DETIK
   const minutes = Math.floor(quizDuration / 60);
   const seconds = quizDuration % 60;
   const formattedTime = minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
 
+  // TAMPILKAN DATA FINAL
   document.getElementById("finalScore").textContent = score;
   document.getElementById("finalCorrect").textContent = correct;
   document.getElementById("finalWrong").textContent = wrongCount;
   document.getElementById("finalPercent").textContent = percent;
   document.getElementById("finalTime").textContent = formattedTime;
 
-  // ===== ISI DATA KE PRO SHARE CARD =====
+  document.getElementById("finalMessage").textContent =
+    getFinalMessage(percent);
+
+  // ISI DATA PRO SHARE CARD
   document.getElementById("proScore").textContent = score;
   document.getElementById("proCorrect").textContent = correct;
   document.getElementById("proWrong").textContent = wrongCount;
   document.getElementById("proPercent").textContent = percent;
   document.getElementById("proTime").textContent = formattedTime;
-
-  document.getElementById("finalMessage").textContent =
-    getFinalMessage(percent);
 
   const box = document.getElementById("finalBox");
   box.classList.remove("hidden");
