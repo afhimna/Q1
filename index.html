@@ -974,9 +974,7 @@ function generateProImage(callback){
     ctx.drawImage(template, 0, 0);
 
     ctx.textAlign = "center";
-
-    let percent = Math.round((correct / questions.length) * 100);
-
+    let percent = parseInt(document.getElementById("finalPercent").textContent);
     let gradeText = "";
     let gradeColor = "";
     let motivation = "";
