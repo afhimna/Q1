@@ -1019,8 +1019,9 @@ async function generateProImage(callback){
     // =========================
     // TITLE
     // =========================
-    ctx.font = "700 48px 'Playfair Display'";
+    ctx.font = "700 80px 'Playfair Display'";
     ctx.fillStyle = "#ffffff";
+    ctx.textAlign = "left";
     ctx.letterSpacing = "2px";
     ctx.fillText("HASIL KUIS AFHIMNA", centerX, h*0.12);
 
@@ -1059,14 +1060,14 @@ async function generateProImage(callback){
     // =========================
     // DETAIL TEXT (RIGHT ALIGN)
     // =========================
-    ctx.textAlign = "center";
-    ctx.font = "600 32px 'Playfair Display'";
+    ctx.textAlign = "left";
+    ctx.font = "600 60px 'Playfair Display'";
     ctx.fillStyle = "#e5e7eb";
-    
-    ctx.fillText("Soal Benar  :  " + correct, centerX, h*0.55);
-    ctx.fillText("Soal Salah  :  " + wrongCount, centerX, h*0.62);
-    ctx.fillText("Waktu Selesai  :  " + waktu, centerX, h*0.69);
-
+    // posisi kiri (beri margin 12% dari kiri)
+    const leftX = w * 0.12;
+    ctx.fillText("Soal Benar     : " + correct, leftX, h*0.55);
+    ctx.fillText("Soal Salah     : " + wrongCount, leftX, h*0.62);
+    ctx.fillText("Waktu Selesai  : " + waktu, leftX, h*0.69);
 
     // =========================
     // MOTIVATION
@@ -1074,18 +1075,18 @@ async function generateProImage(callback){
     ctx.textAlign = "center";
     ctx.font = "italic 28px 'Playfair Display'";
     ctx.fillStyle = "#d1d5db";
-    ctx.fillText(motivation, centerX, h*0.78);
+    ctx.fillText(motivation, centerX, h*0.70);
 
     // =========================
     // CTA
     // =========================
     ctx.font = "bold 26px Arial";
     ctx.fillStyle = "#ffffff";
-    ctx.fillText("Ikuti kuisnya sekarang", centerX, h*0.88);
+    ctx.fillText("Ikuti kuisnya sekarang", centerX, h*0.78);
 
     ctx.font = "22px Arial";
     ctx.fillStyle = "#aaaaaa";
-    ctx.fillText("afhimna.github.io", centerX, h*0.93);
+    ctx.fillText("afhimna.github.io", centerX, h*0.83);
 
     canvas.toBlob(blob => callback(blob), "image/png", 1.0);
   };
