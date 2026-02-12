@@ -1011,7 +1011,7 @@ async function generateProImage(callback){
       motivation = "Jangan berhenti menuntut ilmu.";
     }
 
-    ctx.font = "100px Bokor"; 
+    ctx.font = "95px Bokor"; 
     ctx.fillStyle = "#e5e7eb";
     ctx.textAlign = "left"; // rata kiri
     ctx.fillText("HASIL KUIS AFHIMNA", 20, h * 0.12);
@@ -1053,15 +1053,21 @@ async function generateProImage(callback){
     ctx.fillText("Waktu Selesai  : " + waktu, leftX, h*0.65);
 
 
-    ctx.font = "70px Bokor";
+    ctx.font = "65px Bokor";
     ctx.textAlign = "left";
     ctx.fillStyle = "#ffffff";
-    ctx.fillText("Ikuti kuisnya sekarang", leftX, h*0.80);
+    ctx.fillText("Ikuti kuisnya sekarang", leftX, h*0.82);
 
-    ctx.font = "70px Bokor";
+    
+    ctx.font = "63px Bokor";
     ctx.textAlign = "left";
     ctx.fillStyle = "#aaaaaa";
-    ctx.fillText("afhimna.github.io/home", leftX, h*0.85);
+    ctx.fillText("kunjungi link", leftX, h*0.85);
+    
+    ctx.font = "63px Bokor";
+    ctx.textAlign = "left";
+    ctx.fillStyle = "#aaaaaa";
+    ctx.fillText("afhimna.github.io/home", leftX, h*0.90);
 
     canvas.toBlob(blob => callback(blob), "image/png", 1.0);
   };
