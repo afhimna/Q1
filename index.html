@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -957,26 +958,92 @@ document.addEventListener("click", function(e){
     });
 }
 }); 
-
-// ===== GENERATE PRO SHARE IMAGE =====
 function generateProImage(callback){
 
-  const card = document.getElementById("proShareCard");
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d");
 
-  // tampilkan sementara
-  card.style.display = "block";
+  const template = new Image();
+  template.src = "share-template.jpg";
 
-  html2canvas(card, { scale: 2 }).then(canvas => {
+  template.onload = function(){
 
-    // sembunyikan kembali
-    card.style.display = "none";
+    canvas.width = template.width;
+    canvas.height = template.height;
 
-    canvas.toBlob(blob => {
+    ctx.drawImage(template, 0, 0);
+
+    ctx.textAlign = "center";
+
+    let percent = Math.round((correct / questions.length) * 100);
+
+    let gradeText = "";
+    let gradeColor = "";
+    let motivation = "";
+
+    if(percent >= 85){
+      gradeText = "EXCELLENT";
+      gradeColor = "#00ffcc";
+      motivation = "Luar biasa! Siap tantang temanmu?";
+    }
+    else if(percent >= 60){
+      gradeText = "GOOD JOB";
+      gradeColor = "#ffd700";
+      motivation = "Bagus! Bisa lebih tinggi lagi!";
+    }
+    else{
+      gradeText = "KEEP LEARNING";
+      gradeColor = "#ff4d4d";
+      motivation = "Jangan menyerah! Coba lagi!";
+    }
+
+    // ====== JUDUL (tidak terlalu atas supaya tidak ganggu lampu)
+    ctx.fillStyle = "#ffffff";
+    ctx.font = "bold 55px Arial";
+    ctx.fillText("HASIL KUIS", canvas.width/2, 400);
+
+    // ====== SKOR BESAR
+    ctx.shadowColor = gradeColor;
+    ctx.shadowBlur = 50;
+    ctx.fillStyle = gradeColor;
+    ctx.font = "bold 170px Arial";
+    ctx.fillText(percent + "%", canvas.width/2, 650);
+    ctx.shadowBlur = 0;
+
+    // ====== BADGE
+    ctx.fillStyle = gradeColor;
+    ctx.font = "bold 55px Arial";
+    ctx.fillText(gradeText, canvas.width/2, 760);
+
+    // ====== STATISTIK
+    ctx.fillStyle = "#ffffff";
+    ctx.font = "45px Arial";
+    ctx.fillText(correct + " Benar", canvas.width/2, 900);
+    ctx.fillText(wrongCount + " Salah", canvas.width/2, 960);
+    ctx.fillText(
+      document.getElementById("finalTime").textContent,
+      canvas.width/2,
+      1020
+    );
+
+    // ====== MOTIVASI
+    ctx.fillStyle = "#cccccc";
+    ctx.font = "40px Arial";
+    ctx.fillText(motivation, canvas.width/2, 1150);
+
+    // ====== CTA (diletakkan cukup tinggi agar tidak menabrak tulisan bawah template)
+    ctx.fillStyle = "#ffffff";
+    ctx.font = "bold 45px Arial";
+    ctx.fillText("Ikuti kuisnya sekarang!", canvas.width/2, 1350);
+
+    ctx.font = "35px Arial";
+    ctx.fillText("afhimna.github.io/home", canvas.width/2, 1410);
+
+    canvas.toBlob(blob=>{
       callback(blob);
     });
 
-  });
-
+  };
 }
 </script>
 </body>
