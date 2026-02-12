@@ -1015,32 +1015,25 @@ async function generateProImage(callback){
     beam.addColorStop(1, "rgba(255,255,255,0)");
     ctx.fillStyle = beam;
     ctx.fillRect(centerX-120, 0, 240, h*0.6);
-
-    // =========================
-    // TITLE
-    // =========================
-    ctx.font = "80px Playfair Display"; // ukuran & font
+    ctx.font = "70px Playfair Display"; 
     ctx.fillStyle = "#e5e7eb";
     ctx.textAlign = "left"; // rata kiri
     ctx.fillText("HASIL KUIS AFHIMNA", 20, h * 0.12);
-
-
-    // =========================
-    // PERCENT (GRADIENT + GLOW)
-    // =========================
+    
     const grad = ctx.createLinearGradient(0,0,0,h);
     grad.addColorStop(0, "#ffffff");
     grad.addColorStop(1, gradeColor);
-
+    
     ctx.font = "700 160px 'Playfair Display'";
     ctx.textAlign = "center";
     ctx.fillStyle = grad;
     ctx.shadowColor = gradeColor;
     ctx.shadowBlur = 40;
-    ctx.fillText(percent + "%", centerX, h*0.30);
+    ctx.fillText(percent + "%", centerX, h*0.30); // tambahkan "%" supaya tampil
     ctx.shadowBlur = 0;
 
-    // =========================
+
+// =========================
     // GRADE
     // =========================
     ctx.font = "bold 44px Arial";
@@ -1065,21 +1058,12 @@ async function generateProImage(callback){
     ctx.fillStyle = "#e5e7eb";
     // posisi kiri (beri margin 12% dari kiri)
     const leftX = w * 0.12;
-    ctx.fillText("Soal Benar       : " + correct, leftX, h*0.55);
-    ctx.fillText("Soal Salah       : " + wrongCount, leftX, h*0.60);
+    ctx.font = "600 60px 'Courier New'";
+    ctx.fillText("Soal Benar     : " + correct, leftX, h*0.55);
+    ctx.fillText("Soal Salah     : " + wrongCount, leftX, h*0.60);
     ctx.fillText("Waktu Selesai  : " + waktu, leftX, h*0.65);
 
-    // =========================
-    // MOTIVATION
-    // =========================
-    ctx.textAlign = "center";
-    ctx.font = "italic 28px 'Playfair Display'";
-    ctx.fillStyle = "#d1d5db";
-    ctx.fillText(motivation, centerX, h*0.70);
 
-    // =========================
-    // CTA
-    // =========================
     ctx.font = "bold 26px Arial";
     ctx.fillStyle = "#ffffff";
     ctx.fillText("Ikuti kuisnya sekarang", centerX, h*0.72);
