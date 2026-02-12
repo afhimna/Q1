@@ -1019,8 +1019,8 @@ async function generateProImage(callback){
     // =========================
     // TITLE
     // =========================
-    ctx.font = "40px Playfair Display"; // ukuran & font
-    ctx.fillStyle = "#000"; // warna hitam
+    ctx.font = "80px Playfair Display"; // ukuran & font
+    ctx.fillStyle = "#e5e7eb";
     ctx.textAlign = "left"; // rata kiri
     ctx.fillText("HASIL KUIS AFHIMNA", 20, h * 0.12);
 
@@ -1065,9 +1065,9 @@ async function generateProImage(callback){
     ctx.fillStyle = "#e5e7eb";
     // posisi kiri (beri margin 12% dari kiri)
     const leftX = w * 0.12;
-    ctx.fillText("Soal Benar     : " + correct, leftX, h*0.55);
-    ctx.fillText("Soal Salah     : " + wrongCount, leftX, h*0.58);
-    ctx.fillText("Waktu Selesai  : " + waktu, leftX, h*0.61);
+    ctx.fillText("Soal Benar       : " + correct, leftX, h*0.55);
+    ctx.fillText("Soal Salah       : " + wrongCount, leftX, h*0.60);
+    ctx.fillText("Waktu Selesai  : " + waktu, leftX, h*0.65);
 
     // =========================
     // MOTIVATION
@@ -1082,11 +1082,11 @@ async function generateProImage(callback){
     // =========================
     ctx.font = "bold 26px Arial";
     ctx.fillStyle = "#ffffff";
-    ctx.fillText("Ikuti kuisnya sekarang", centerX, h*0.68);
+    ctx.fillText("Ikuti kuisnya sekarang", centerX, h*0.72);
 
     ctx.font = "22px Arial";
     ctx.fillStyle = "#aaaaaa";
-    ctx.fillText("afhimna.github.io", centerX, h*0.70);
+    ctx.fillText("afhimna.github.io", centerX, h*0.75);
 
     canvas.toBlob(blob => callback(blob), "image/png", 1.0);
   };
