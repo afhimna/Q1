@@ -6,7 +6,7 @@
 <title>Kuis Nahwu</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Amiri&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bokor&display=swap" rel="stylesheet">
 
 <style>
 *{box-sizing:border-box}
@@ -1015,7 +1015,7 @@ async function generateProImage(callback){
     beam.addColorStop(1, "rgba(255,255,255,0)");
     ctx.fillStyle = beam;
     ctx.fillRect(centerX-120, 0, 240, h*0.6);
-    ctx.font = "70px Playfair Display"; 
+    ctx.font = "70px Bokor"; 
     ctx.fillStyle = "#e5e7eb";
     ctx.textAlign = "left"; // rata kiri
     ctx.fillText("HASIL KUIS AFHIMNA", 20, h * 0.12);
@@ -1024,24 +1024,18 @@ async function generateProImage(callback){
     grad.addColorStop(0, "#ffffff");
     grad.addColorStop(1, gradeColor);
     
-    ctx.font = "700 160px 'Playfair Display'";
+    ctx.font = "700 200px 'Bokor'";
     ctx.textAlign = "center";
     ctx.fillStyle = grad;
     ctx.shadowColor = gradeColor;
     ctx.shadowBlur = 40;
-    ctx.fillText(percent + "%", centerX, h*0.30); // tambahkan "%" supaya tampil
+    ctx.fillText(percent + "", centerX, h*0.30);
     ctx.shadowBlur = 0;
-
-
-// =========================
-    // GRADE
     // =========================
-    ctx.font = "bold 44px Arial";
+    ctx.font = "bold 44px Bokor";
     ctx.fillStyle = gradeColor;
     ctx.fillText(gradeText, centerX, h*0.40);
 
-    // =========================
-    // DIVIDER LINE
     // =========================
     ctx.strokeStyle = "rgba(255,255,255,0.2)";
     ctx.lineWidth = 2;
@@ -1054,23 +1048,22 @@ async function generateProImage(callback){
     // DETAIL TEXT (RIGHT ALIGN)
     // =========================
     ctx.textAlign = "left";
-    ctx.font = "600 60px 'Playfair Display'";
+    ctx.font = "600 60px 'Bokor'";
     ctx.fillStyle = "#e5e7eb";
-    // posisi kiri (beri margin 12% dari kiri)
-    const leftX = w * 0.12;
+    const leftX = w * 0.10;
     ctx.font = "600 60px 'Courier New'";
     ctx.fillText("Soal Benar     : " + correct, leftX, h*0.55);
     ctx.fillText("Soal Salah     : " + wrongCount, leftX, h*0.60);
     ctx.fillText("Waktu Selesai  : " + waktu, leftX, h*0.65);
 
 
-    ctx.font = "bold 26px Arial";
+    ctx.font = "26px Bokor";
     ctx.fillStyle = "#ffffff";
     ctx.fillText("Ikuti kuisnya sekarang", centerX, h*0.72);
 
-    ctx.font = "22px Arial";
+    ctx.font = "22px Bokor";
     ctx.fillStyle = "#aaaaaa";
-    ctx.fillText("afhimna.github.io", centerX, h*0.75);
+    ctx.fillText("afhimna.github.io/home", centerX, h*0.75);
 
     canvas.toBlob(blob => callback(blob), "image/png", 1.0);
   };
