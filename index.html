@@ -297,6 +297,47 @@ body.page-ready{opacity:1}
   opacity:1;
   transform:translateY(0);
 }
+.share-panel{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.5);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .3s ease;
+  z-index:9999;
+}
+
+.share-panel.active{
+  opacity:1;
+  pointer-events:auto;
+}
+
+.share-box{
+  background:white;
+  padding:25px;
+  border-radius:15px;
+  text-align:center;
+  transform:scale(.9);
+  transition:transform .3s ease;
+}
+
+.share-panel.active .share-box{
+  transform:scale(1);
+}
+
+.share-icons img{
+  width:60px;
+  margin:15px;
+  cursor:pointer;
+  transition:transform .2s ease;
+}
+
+.share-icons img:hover{
+  transform:scale(1.15);
+}
 </style>
 </head>
 
@@ -345,7 +386,16 @@ body.page-ready{opacity:1}
   <button id="shareBtn">📤 Bagikan</button>
 </div>
 </div>
-
+<div id="sharePanel" class="share-panel">
+  <div class="share-box">
+    <h3>Bagikan Skor Anda</h3>
+    <div class="share-icons">
+      <img id="shareWa" src="LINK_WA">
+      <img id="shareFb" src="LINK_FB">
+      <img id="shareIg" src="LINK_IG">
+    </div>
+  </div>
+</div>
 </div>
 
 <audio id="tickSound" src="tick.mp3" preload="auto"></audio>
@@ -786,6 +836,33 @@ document.getElementById("finalTime").textContent = formattedTime;
   box.scrollIntoView({behavior:"smooth",block:"center"});
 }
 document.addEventListener("click",function(e){
+  const percent = document.getElementById("finalPercent")?.textContent || "";
+const shareText = encodeURIComponent(
+  `Saya mendapat skor ${percent}% di Kuis Nahwu! Coba juga di sini: ${window.location.href}`
+);
+
+// 1️⃣ Buka panel
+if(e.target.id === "shareBtn"){
+  document.getElementById("sharePanel").classList.add("active");
+}
+
+// 2️⃣ WhatsApp
+if(e.target.id === "shareWa"){
+  window.open(`https://wa.me/?text=${shareText}`, "_blank");
+  document.getElementById("sharePanel").classList.remove("active");
+}
+
+// 3️⃣ Facebook
+if(e.target.id === "shareFb"){
+  window.open(`https://www.facebook.com/sharer/sharer.php?u=${window.location.href}`, "_blank");
+  document.getElementById("sharePanel").classList.remove("active");
+}
+
+// 4️⃣ Instagram
+if(e.target.id === "shareIg"){
+  alert("Instagram tidak mendukung share langsung via web.");
+  document.getElementById("sharePanel").classList.remove("active");
+}
 
   if(e.target.id === "retryBtn"){
     location.reload();
