@@ -7,6 +7,7 @@
 
 <link href="https://fonts.googleapis.com/css2?family=Amiri&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Bokor&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
 
 <style>
 *{box-sizing:border-box}
@@ -965,6 +966,7 @@ async function generateProImage(callback){
   // ✅ Pastikan font sudah siap sebelum render
   if (document.fonts) {
     await document.fonts.load('700 40px "Bokor"');
+    await document.fonts.load('700 40px "Playfair Display"');
     await document.fonts.ready;
   }
 
@@ -1026,7 +1028,7 @@ async function generateProImage(callback){
     grad.addColorStop(0, "#ffffff");
     grad.addColorStop(1, gradeColor);
     
-    ctx.font = "700 200px 'Bokor'";
+    ctx.font = "700 200px 'Playfair Display'";
     ctx.textAlign = "center";
     ctx.fillStyle = grad;
     ctx.shadowColor = gradeColor;
@@ -1051,7 +1053,7 @@ async function generateProImage(callback){
     // =========================
     ctx.textAlign = "left";
     ctx.font = "600 60px 'Bokor'";
-    ctx.fillStyle = gradeColor;
+    ctx.fillStyle = "#ffffff";
     const leftX = w * 0.10;
     ctx.font = "600 60px 'Bokor'";
     ctx.fillText("Soal Benar     : " + correct, leftX, h*0.55);
@@ -1060,12 +1062,14 @@ async function generateProImage(callback){
 
 
     ctx.font = "30px Bokor";
+    ctx.textAlign = "left";
     ctx.fillStyle = "#ffffff";
-    ctx.fillText("Ikuti kuisnya sekarang", centerX, h*0.72);
+    ctx.fillText("Ikuti kuisnya sekarang", leftX, h*0.92);
 
     ctx.font = "30px Bokor";
+    ctx.textAlign = "left";
     ctx.fillStyle = "#aaaaaa";
-    ctx.fillText("afhimna.github.io/home", centerX, h*0.75);
+    ctx.fillText("afhimna.github.io/home", leftX, h*0.95);
 
     canvas.toBlob(blob => callback(blob), "image/png", 1.0);
   };
