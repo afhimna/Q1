@@ -960,99 +960,126 @@ document.addEventListener("click", function(e){
 }); 
 function generateProImage(callback){
 
-  const canvas = document.createElement("canvas");
-  const ctx = canvas.getContext("2d");
-
   const template = new Image();
+  template.crossOrigin = "anonymous";
   template.src = "share-template.jpg";
 
   template.onload = function(){
-    canvas.width = template.width;
-    canvas.height = template.height;
+
+    const scale = 2;
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+
+    canvas.width = template.width * scale;
+    canvas.height = template.height * scale;
+    ctx.scale(scale, scale);
 
     ctx.drawImage(template, 0, 0);
 
-    const centerX = canvas.width / 2;
-    const h = canvas.height;
-    const percent = parseInt(document.getElementById("finalPercent").textContent);
+    const w = template.width;
+    const h = template.height;
+    const centerX = w / 2;
+    const rightX = w * 0.88;
 
-    // ====== GRADE LOGIC =====
+    const percent = parseInt(document.getElementById("finalPercent").textContent);
+    const waktu = document.getElementById("finalTime").textContent;
+
     let gradeText="", gradeColor="", motivation="";
+
     if(percent >= 85){
       gradeText = "EXCELLENT";
-      gradeColor = "#00ffcc";
-      motivation = "Luar biasa! Siap tantang temanmu?";
+      gradeColor = "#00ffd5";
+      motivation = "Ilmu adalah cahaya yang menerangi.";
     } else if(percent >= 60){
       gradeText = "GOOD JOB";
       gradeColor = "#ffd700";
-      motivation = "Bagus! Bisa lebih tinggi lagi!";
+      motivation = "Teruskan langkahmu menuju pemahaman.";
     } else{
       gradeText = "KEEP LEARNING";
       gradeColor = "#ff4d4d";
-      motivation = "Jangan menyerah! Coba lagi!";
+      motivation = "Jangan berhenti menuntut ilmu.";
     }
 
-    // ====== UTILITY: DRAW CENTER TEXT WITH GLOW =====
-    function drawText(text, y, fontSize, color, bold=true, shadow=true){
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      ctx.font = `${bold?"bold ":""}${fontSize}px Arial`;
-      if(shadow){
-        ctx.shadowColor = color;
-        ctx.shadowBlur = fontSize * 0.2; // 20% of fontSize
-      } else {
-        ctx.shadowBlur = 0;
-      }
-      ctx.fillStyle = color;
-      ctx.fillText(text, centerX, y);
-      ctx.shadowBlur = 0;
-    }
+    // =========================
+    // LIGHT BEAM EFFECT
+    // =========================
+    const beam = ctx.createLinearGradient(centerX, 0, centerX, h*0.6);
+    beam.addColorStop(0, "rgba(255,255,255,0.25)");
+    beam.addColorStop(1, "rgba(255,255,255,0)");
+    ctx.fillStyle = beam;
+    ctx.fillRect(centerX-120, 0, 240, h*0.6);
 
-    // ====== JUDUL =====
-    drawText("HASIL KUIS", h * 0.15, canvas.width * 0.05, "#ffffff");
+    // =========================
+    // TITLE
+    // =========================
+    ctx.textAlign = "center";
+    ctx.font = "bold 40px Arial";
+    ctx.fillStyle = "#ffffff";
+    ctx.fillText("HASIL KUIS AFHIMNA", centerX, h*0.12);
 
-    // ====== PERSENTASE =====
-    drawText(percent + "%", h * 0.30, canvas.width * 0.18, gradeColor);
+    // =========================
+    // PERCENT (GRADIENT + GLOW)
+    // =========================
+    const grad = ctx.createLinearGradient(0,0,0,h);
+    grad.addColorStop(0, "#ffffff");
+    grad.addColorStop(1, gradeColor);
 
-    // ====== BADGE =====
-    drawText(gradeText, h * 0.40, canvas.width * 0.06, gradeColor);
+    ctx.font = "bold 150px Arial";
+    ctx.textAlign = "center";
+    ctx.fillStyle = grad;
+    ctx.shadowColor = gradeColor;
+    ctx.shadowBlur = 40;
+    ctx.fillText(percent + "%", centerX, h*0.30);
+    ctx.shadowBlur = 0;
 
-    // ====== STATISTIK =====
-    const statsFont = canvas.width * 0.045;
-    drawText(correct + " Benar", h * 0.55, statsFont, "#ffffff", true, false);
-    drawText(wrongCount + " Salah", h * 0.61, statsFont, "#ffffff", true, false);
-    drawText(document.getElementById("finalTime").textContent, h * 0.67, statsFont, "#ffffff", true, false);
+    // =========================
+    // GRADE
+    // =========================
+    ctx.font = "bold 44px Arial";
+    ctx.fillStyle = gradeColor;
+    ctx.fillText(gradeText, centerX, h*0.40);
 
-    // ====== MOTIVASI (auto wrap) =====
-    function wrapText(text, x, startY, maxWidth, lineHeight){
-      const words = text.split(" ");
-      let line = "";
-      let y = startY;
-      ctx.textAlign = "center";
-      ctx.font = `${canvas.width * 0.04}px Arial`;
-      ctx.fillStyle = "#cccccc";
-      for(let n=0; n<words.length; n++){
-        const testLine = line + words[n] + " ";
-        const metrics = ctx.measureText(testLine);
-        if(metrics.width > maxWidth && n>0){
-          ctx.fillText(line, x, y);
-          line = words[n] + " ";
-          y += lineHeight;
-        } else {
-          line = testLine;
-        }
-      }
-      ctx.fillText(line, x, y);
-      return y + lineHeight;
-    }
-    wrapText(motivation, centerX, h * 0.75, canvas.width * 0.8, canvas.width * 0.05);
+    // =========================
+    // DIVIDER LINE
+    // =========================
+    ctx.strokeStyle = "rgba(255,255,255,0.2)";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(w*0.25, h*0.46);
+    ctx.lineTo(w*0.75, h*0.46);
+    ctx.stroke();
 
-    // ====== CTA =====
-    drawText("Ikuti kuisnya sekarang!", h * 0.90, canvas.width * 0.05, "#ffffff");
-    drawText("afhimna.github.io/home", h * 0.94, canvas.width * 0.04, "#ffffff");
+    // =========================
+    // DETAIL TEXT (RIGHT ALIGN)
+    // =========================
+    ctx.textAlign = "right";
+    ctx.font = "28px Arial";
+    ctx.fillStyle = "#ffffff";
 
-    // ==== RETURN BLOB ====
-    canvas.toBlob(blob=>callback(blob));
+    ctx.fillText("Soal benar : " + correct, rightX, h*0.55);
+    ctx.fillText("Soal salah : " + wrongCount, rightX, h*0.61);
+    ctx.fillText("Waktu      : " + waktu + " menit", rightX, h*0.67);
+
+    // =========================
+    // MOTIVATION
+    // =========================
+    ctx.textAlign = "center";
+    ctx.font = "26px Arial";
+    ctx.fillStyle = "#cccccc";
+    ctx.fillText(motivation, centerX, h*0.78);
+
+    // =========================
+    // CTA
+    // =========================
+    ctx.font = "bold 26px Arial";
+    ctx.fillStyle = "#ffffff";
+    ctx.fillText("Ikuti kuisnya sekarang", centerX, h*0.88);
+
+    ctx.font = "22px Arial";
+    ctx.fillStyle = "#aaaaaa";
+    ctx.fillText("afhimna.github.io", centerX, h*0.93);
+
+    canvas.toBlob(blob => callback(blob), "image/png", 1.0);
   };
 }
 </script>
