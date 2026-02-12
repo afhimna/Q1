@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -7,6 +6,7 @@
 <title>Kuis Nahwu</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Amiri&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
 
 <style>
 *{box-sizing:border-box}
@@ -958,9 +958,16 @@ document.addEventListener("click", function(e){
     });
 }
 }); 
-function generateProImage(callback){
+async function generateProImage(callback){
+
+  // ✅ Pastikan font sudah siap sebelum render
+  if (document.fonts) {
+    await document.fonts.load('700 40px "Playfair Display"');
+    await document.fonts.ready;
+  }
 
   const template = new Image();
+
   template.crossOrigin = "anonymous";
   template.src = "share-template.jpg";
 
@@ -1012,9 +1019,9 @@ function generateProImage(callback){
     // =========================
     // TITLE
     // =========================
-    ctx.textAlign = "center";
-    ctx.font = "bold 40px Arial";
+    ctx.font = "700 48px 'Playfair Display'";
     ctx.fillStyle = "#ffffff";
+    ctx.letterSpacing = "2px";
     ctx.fillText("HASIL KUIS AFHIMNA", centerX, h*0.12);
 
     // =========================
@@ -1024,7 +1031,7 @@ function generateProImage(callback){
     grad.addColorStop(0, "#ffffff");
     grad.addColorStop(1, gradeColor);
 
-    ctx.font = "bold 150px Arial";
+    ctx.font = "700 160px 'Playfair Display'";
     ctx.textAlign = "center";
     ctx.fillStyle = grad;
     ctx.shadowColor = gradeColor;
@@ -1052,20 +1059,21 @@ function generateProImage(callback){
     // =========================
     // DETAIL TEXT (RIGHT ALIGN)
     // =========================
-    ctx.textAlign = "right";
-    ctx.font = "28px Arial";
-    ctx.fillStyle = "#ffffff";
+    ctx.textAlign = "center";
+    ctx.font = "600 32px 'Playfair Display'";
+    ctx.fillStyle = "#e5e7eb";
+    
+    ctx.fillText("Soal Benar  :  " + correct, centerX, h*0.55);
+    ctx.fillText("Soal Salah  :  " + wrongCount, centerX, h*0.62);
+    ctx.fillText("Waktu Selesai  :  " + waktu, centerX, h*0.69);
 
-    ctx.fillText("Soal benar : " + correct, rightX, h*0.55);
-    ctx.fillText("Soal salah : " + wrongCount, rightX, h*0.61);
-    ctx.fillText("Waktu      : " + waktu + " menit", rightX, h*0.67);
 
     // =========================
     // MOTIVATION
     // =========================
     ctx.textAlign = "center";
-    ctx.font = "26px Arial";
-    ctx.fillStyle = "#cccccc";
+    ctx.font = "italic 28px 'Playfair Display'";
+    ctx.fillStyle = "#d1d5db";
     ctx.fillText(motivation, centerX, h*0.78);
 
     // =========================
