@@ -1014,8 +1014,12 @@ async function generateProImage(callback){
     
     ctx.font = "700 250px 'Playfair Display'";
     ctx.textAlign = "center";
-    ctx.fillStyle = gradeColor;
-    // =========================
+    ctx.fillStyle = grad;
+    ctx.shadowColor = gradeColor;
+    ctx.shadowBlur = 40;
+    ctx.fillText(percent + "", centerX, h*0.30);
+    ctx.shadowBlur = 0;
+    
     ctx.font = "40px 'Playfair Display'";
     ctx.fillStyle = gradeColor;
     ctx.fillText(gradeText, centerX, h*0.40);
