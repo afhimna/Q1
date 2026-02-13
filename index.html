@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -1014,11 +1015,11 @@ async function generateProImage(callback){
     
     ctx.font = "700 250px 'Playfair Display'";
     ctx.textAlign = "center";
-    ctx.fillStyle = grad;
-    ctx.shadowColor = gradeColor;
-    ctx.shadowBlur = 40;
-    ctx.fillText(percent + "", centerX, h*0.30);
+    ctx.fillStyle = gradeColor;   // warna murni
+    ctx.shadowColor = "transparent";
     ctx.shadowBlur = 0;
+    ctx.fillText(percent + "", centerX, h*0.30);
+
     
     ctx.font = "40px 'Playfair Display'";
     ctx.fillStyle = gradeColor;
