@@ -1000,22 +1000,14 @@ async function generateProImage(callback){
     if(percent >= 85){
       gradeText = "EXCELLENT";
       gradeColor = "#00ffd5";
-      motivation = "Ilmu adalah cahaya yang menerangi.";
     } else if(percent >= 60){
       gradeText = "GOOD JOB";
       gradeColor = "#ffd700";
-      motivation = "Teruskan langkahmu menuju pemahaman.";
     } else{
       gradeText = "KEEP LEARNING";
       gradeColor = "#ff4d4d";
-      motivation = "Jangan berhenti menuntut ilmu.";
     }
 
-    ctx.font = "95px Bokor"; 
-    ctx.fillStyle = "#e5e7eb";
-    ctx.textAlign = "left"; // rata kiri
-    ctx.fillText("HASIL KUIS AFHIMNA", 20, h * 0.12);
-    
     const grad = ctx.createLinearGradient(0,0,0,h);
     grad.addColorStop(0, "#ffffff");
     grad.addColorStop(1, gradeColor);
@@ -1051,23 +1043,6 @@ async function generateProImage(callback){
     ctx.fillText("Soal Benar     : " + correct, leftX, h*0.55);
     ctx.fillText("Soal Salah     : " + wrongCount, leftX, h*0.60);
     ctx.fillText("Waktu Selesai  : " + waktu, leftX, h*0.65);
-
-
-    ctx.font = "65px Bokor";
-    ctx.textAlign = "left";
-    ctx.fillStyle = "#ffffff";
-    ctx.fillText("Ikuti kuisnya sekarang", leftX, h*0.82);
-
-    
-    ctx.font = "63px Bokor";
-    ctx.textAlign = "left";
-    ctx.fillStyle = "#aaaaaa";
-    ctx.fillText("kunjungi link", leftX, h*0.85);
-    
-    ctx.font = "63px Bokor";
-    ctx.textAlign = "left";
-    ctx.fillStyle = "#aaaaaa";
-    ctx.fillText("afhimna.github.io/home", leftX, h*0.90);
 
     canvas.toBlob(blob => callback(blob), "image/png", 1.0);
   };
