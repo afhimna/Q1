@@ -1012,7 +1012,7 @@ async function generateProImage(callback){
     grad.addColorStop(0, "#ffffff");
     grad.addColorStop(1, gradeColor);
     
-    ctx.font = "700 50px 'Playfair Display'";
+    ctx.font = "700 250px 'Playfair Display'";
     ctx.textAlign = "center";
     ctx.fillStyle = grad;
     ctx.shadowColor = gradeColor;
@@ -1020,7 +1020,7 @@ async function generateProImage(callback){
     ctx.fillText(percent + "", centerX, h*0.30);
     ctx.shadowBlur = 0;
     // =========================
-    ctx.font = "600px 'Playfair Display'";
+    ctx.font = "60px 'Playfair Display'";
     ctx.fillStyle = gradeColor;
     ctx.fillText(gradeText, centerX, h*0.40);
 
@@ -1038,7 +1038,7 @@ async function generateProImage(callback){
     ctx.textAlign = "left";
     ctx.font = "600 60px 'Bokor'";
     ctx.fillStyle = "#ffffff";
-    const leftX = w * 0.30;
+    const leftX = w * 0.27;
     ctx.font = "600 60px 'Bokor'";
     ctx.fillText("Soal Benar     : " + correct, leftX, h*0.60);
     ctx.fillText("Soal Salah     : " + wrongCount, leftX, h*0.65);
