@@ -407,9 +407,6 @@ let quizDuration = 0; // dalam detik
 
 /* ✅ REVIEW MODE */
 let reviewLog=[];
-
-let countdownInterval=null,remaining=TIME_LIMIT/1000;
-let reviewLog=[];
 let countdownInterval=null,remaining=TIME_LIMIT/1000;
 
 // 🔔 FLAG AGAR ALARM TIDAK PLAY BERULANG
@@ -482,9 +479,15 @@ function startTimer(){
     );
 
     if(remaining <= 3){
+
   quizBox.classList.remove("timer-warning");
   quizBox.classList.add("timer-danger");
-  alarmSound.play();
+
+  if(!alarmPlayed){
+    alarmSound.currentTime = 0;
+    alarmSound.play();
+    alarmPlayed = true;
+  }
 }
 else if(remaining <= 5){
   quizBox.classList.add("timer-warning");
