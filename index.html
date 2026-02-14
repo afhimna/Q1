@@ -968,8 +968,14 @@ async function generateProImage(callback){
     ctx.font = "40px 'Playfair Display'";
     ctx.fillStyle = gradeColor;
     ctx.fillText(gradeText, centerX, h*0.40);
+	
+	ctx.textAlign = "left";
+    ctx.font = "600 60px 'Bokor'";
+    ctx.fillStyle = "#ffffff";
+    const leftX = w * 0.24;
+    ctx.font = "600 60px 'Bokor'";
+    ctx.fillText("Soal Fashl     : 1", leftX, h*0.75);
 
-    // =========================
     ctx.strokeStyle = "rgba(255,255,255,0.2)";
     ctx.lineWidth = 2;
     ctx.beginPath();
