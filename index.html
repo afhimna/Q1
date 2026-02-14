@@ -939,7 +939,9 @@ async function generateProImage(callback){
 
     const percent = parseInt(document.getElementById("finalPercent").textContent);
     const waktu = document.getElementById("finalTime").textContent;
+    const Soal Fashl = "1";
 
+    
     let gradeText="", gradeColor="", motivation="";
 
     if(percent >= 85){
@@ -985,10 +987,12 @@ async function generateProImage(callback){
 	const startY = h * 0.60;
 	const lineGap = h * 0.05;
 	const rows = [
-	{ label: "Jawaban Benar", value: correct },
-	{ label: "Jawaban Salah", value: wrongCount },
-	{ label: "Waktu Selesai", value: waktu }
+  { label: "Jawaban Benar", value: correct },
+  { label: "Jawaban Salah", value: wrongCount },
+  { label: "Durasi pengerjaan", value: waktu },
+  { label: "Soal Fashl", value: Soal Fashl }
 ];
+
 
 let maxWidth = 0;
 rows.forEach(row => {
