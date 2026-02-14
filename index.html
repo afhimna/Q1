@@ -1,10 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kuis Nahwu</title>
+<title>AFHIMNA</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Amiri&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Bokor&display=swap" rel="stylesheet">
@@ -35,8 +34,6 @@ body.page-ready{opacity:1}
   padding:25px;
   box-shadow:0 0 40px rgba(0,0,0,.6);
 }
-
-/* ===== TIMER ===== */
 #timerBox{
   text-align:center;
   margin-bottom:16px;
@@ -59,8 +56,6 @@ body.page-ready{opacity:1}
 .progress-warn{background:#eab308}
 .progress-danger{background:#ef4444}
 #timerBox.danger{color:#ef4444}
-
-/* ===== QUESTION ===== */
 #questionText{
   font-family:"Amiri",serif;
   font-size:1.45rem;
@@ -138,7 +133,6 @@ body.page-ready{opacity:1}
 #nextBtn:not(.hidden){opacity:1;transform:translateY(0)}
 .hidden{display:none}
 
-/* ===== ANIMASI ===== */
 .fade-enter{opacity:0;transform:translateY(12px)}
 .fade-enter-active{opacity:1;transform:translateY(0);transition:.4s ease}
 .timer-warning{animation:pulseRed 1s infinite,shake .3s infinite}
@@ -177,7 +171,6 @@ body.page-ready{opacity:1}
 .timer-danger{
   animation:pulseRed .6s infinite, shake .15s infinite;
 }
-/* ===== REVIEW TRANSITION ===== */
 #reviewBox{
   opacity:0;
   transform:translateY(20px);
@@ -188,7 +181,6 @@ body.page-ready{opacity:1}
   opacity:1;
   transform:translateY(0);
 }
-/* ===== REVIEW OVERLAY TRANSITION ===== */
 #reviewOverlay{
   opacity:0;
   transform:translateY(20px) scale(.98);
@@ -199,7 +191,6 @@ body.page-ready{opacity:1}
   opacity:1;
   transform:translateY(0) scale(1);
 }
-/* ===== COUNTDOWN OVERLAY ===== */
 #countdownOverlay{
   position:fixed;
   inset:0;
@@ -230,7 +221,6 @@ body.page-ready{opacity:1}
   40%{opacity:1;transform:scale(1.1)}
   100%{opacity:1;transform:scale(1)}
 }
-/* ===== GLOBAL SUMMARY ===== */
 #finalBox{
   margin-top:24px;
   padding:22px;
@@ -312,6 +302,8 @@ body.page-ready{opacity:1}
 </div>
 
 <div id="startScreen">
+  <h2>Selamat datang di</h2>
+  <h2>kuis AFHIMNA</h2>
   <h2>Sudah siap?</h2>
   <button id="startBtn" disabled>Mulai</button>
 </div>
@@ -328,13 +320,13 @@ body.page-ready{opacity:1}
   </div>
 
   <div id="result" class="hidden"></div>
-  <button id="nextBtn" class="hidden">Soal Selanjutnya</button>
+  <button id="nextBtn" class="hidden">Selanjutnya</button>
 </div>
 <div id="finalBox" class="hidden">
   <h3>📊 Ringkasan Akhir</h3>
 
   <div class="final-content">
-  Skor: <b id="finalScore">0</b> / 100<br>
+  Nilai: <b id="finalScore">0</b> / 100<br>
   Benar: <span id="finalCorrect">0</span><br>
   Salah: <span id="finalWrong">0</span><br>
   Persentase: <span id="finalPercent">0</span>%<br>
@@ -343,11 +335,11 @@ body.page-ready{opacity:1}
 
   <div id="finalMessage" class="final-message"></div>
   <div class="final-actions">
-  <button id="retryBtn">🔁 Ulangi Kuis</button>
+  <button id="retryBtn">Ulangi Kuis</button>
   <button onclick="window.open('https://www.google.com', '_blank')">
   Penjelasan Tambahan
 </button>
-  <button id="shareBtn">📤 Bagikan</button>
+  <button id="shareBtn">Share nilai</button>
 </div>
 </div>
 </div>
@@ -367,7 +359,7 @@ body.page-ready{opacity:1}
 ">
 
   <h2 style="text-align:center;margin-bottom:30px">
-    📊 HASIL KUIS NAHWU
+    📊 HASIL KUIS AFHIMNA
   </h2>
 
   <div style="font-size:20px;line-height:1.8">
@@ -400,16 +392,13 @@ const POINT=5,TIME_LIMIT=20000;
 let data=[],idx=0,score=0,correct=0,wrongCount=0;
 let currentOptions=[],timer=null,timerActive=false;
 
-/* ⏱ GLOBAL QUIZ TIMER */
 let quizStartTime = null;
 let quizEndTime = null;
 let quizDuration = 0; // dalam detik
 
-/* ✅ REVIEW MODE */
 let reviewLog=[];
 let countdownInterval=null,remaining=TIME_LIMIT/1000;
 
-// 🔔 FLAG AGAR ALARM TIDAK PLAY BERULANG
 let alarmPlayed = false;
 
 const timeNum=document.getElementById("timeNum"),
@@ -444,10 +433,8 @@ function shuffle(arr){
 
 function startTimer(){
 
-  // 🔔 RESET ALARM FLAG TIAP SOAL BARU
   alarmPlayed = false;
 
-  // 🔄 reset kondisi visual timer (soal baru = normal)
   quizBox.classList.remove("timer-warning");
   alarmSound.pause();
   alarmSound.currentTime = 0;
@@ -466,7 +453,6 @@ function startTimer(){
   remaining--;
   timeNum.textContent = remaining;
 
-  // 🔊 SOUND TICK SETIAP DETIK
   tickSound.currentTime = 0;
   tickSound.play();
 
@@ -508,7 +494,7 @@ function pauseTimer(){
   clearTimeout(timer);
   clearInterval(countdownInterval);
 
-  stopAllSounds(); // hentikan semua suara
+  stopAllSounds(); 
 }
 
 function show(){
@@ -552,7 +538,6 @@ function check(btn,opt){
   pauseTimer();
   stopAllSounds();
 
-  /* ✅ REVIEW MODE LOG (JAWABAN) */
   reviewLog.push({
     soal: data[idx].question,
     jawabanBenar: data[idx]["option_" + ["A","B","C","D","E"][Number(data[idx].answer_index)]],
@@ -597,18 +582,16 @@ function timeUp(){
   pauseTimer();
   stopAllSounds();
 
-  wrongSound.currentTime = 0; // pastikan mulai dari awal
+  wrongSound.currentTime = 0; 
   wrongSound.play();
   
   tickSound.pause();
   tickSound.currentTime = 0;
 
-  // 🛑 HENTIKAN SEMUA EFEK TIMER
   quizBox.classList.remove("timer-warning","timer-danger");
   alarmSound.pause();
   alarmSound.currentTime = 0;
 
-  /* ✅ REVIEW MODE LOG (TIMEOUT) */
   reviewLog.push({
     soal: data[idx].question,
     jawabanBenar: data[idx]["option_" + ["A","B","C","D","E"][Number(data[idx].answer_index)]],
@@ -638,12 +621,10 @@ nextBtn.onclick = ()=>{
     // 🔁 masih ada soal → lanjut kuis
     show();
   }else{
-    // 🛑 soal habis → tutup kuis & timer
     quiz.classList.add("hidden");      // (opsional UX, tapi disarankan)
     nextBtn.classList.add("hidden");
     timerBox.classList.add("hidden");
 
-    // ✨ tampilkan review
     showReview();
   }
 };
@@ -653,7 +634,6 @@ startBtn.onclick=()=>{
 
   startCountdown(()=>{
 
-  // ⏱ MULAI GLOBAL TIMER DI SINI
   quizStartTime = Date.now();
 
   quiz.classList.remove("hidden");
@@ -685,7 +665,7 @@ function showReview(){
   let html=`
     <div style="max-width:720px;margin:auto">
       <h2 style="text-align:center;margin-bottom:20px">
-        📋 Review Jawaban
+        Ulasan Jawaban
       </h2>
   `;
 
@@ -744,7 +724,6 @@ function showReview(){
 
   overlay.innerHTML=html;
   document.body.appendChild(overlay);
-  // 🔥 Scroll Reveal Effect
 const items = overlay.querySelectorAll(".review-item");
 
 const observer = new IntersectionObserver((entries)=>{
@@ -762,7 +741,6 @@ items.forEach(item=>{
   observer.observe(item);
 });
 
-  /* ✨ AKTIFKAN TRANSISI */
   requestAnimationFrame(()=>{
     overlay.classList.add("show");
   });
@@ -775,10 +753,8 @@ items.forEach(item=>{
 
     overlay.remove();
 
-    // ⏱ AKHIRI GLOBAL TIMER
     quizEndTime = Date.now();
 
-    // hitung durasi dalam detik
     quizDuration = Math.floor((quizEndTime - quizStartTime) / 1000);
 
     showGlobalSummary();
@@ -825,18 +801,18 @@ function startCountdown(onFinish){
 }
 function getFinalMessage(percent){
   if(percent === 100){
-    return "MasyaAllah, semua jawaban benar. Penguasaan materi sangat ممتاز.";
+    return "MasyaAllah, semua jawaban benar. Penguasaan materi sangat baik.";
   }
   if(percent >= 75){
-    return "Hasil sangat baik. Tinggal sedikit penguatan untuk mencapai kesempurnaan.";
+    return "Hasil lumayan baik. Tinggal sedikit penguatan.";
   }
   if(percent >= 50){
     return "Cukup baik. Perlu pengulangan agar pemahaman semakin kokoh.";
   }
   if(percent >= 25){
-    return "Masih perlu latihan. Jangan menyerah, perbaiki dan ulangi kembali.";
+    return "Masih perlu belajar. Jangan menyerah, perbaiki dan ulangi kembali.";
   }
-  return "Jangan berkecil hati. Setiap kesalahan adalah jalan menuju ilmu.";
+  return "Jangan berkecil hati. Jadikan hasil ini sebagai motivasi.";
 }
 function stopAllSounds(){
   tickSound.pause();
@@ -856,12 +832,10 @@ function showGlobalSummary(){
   const total = correct + wrongCount;
   const percent = total === 0 ? 0 : Math.round((correct / total) * 100);
 
-  // ⏱ FORMAT WAKTU MENIT:DETIK
   const minutes = Math.floor(quizDuration / 60);
   const seconds = quizDuration % 60;
   const formattedTime = minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
 
-  // TAMPILKAN DATA FINAL
   document.getElementById("finalScore").textContent = score;
   document.getElementById("finalCorrect").textContent = correct;
   document.getElementById("finalWrong").textContent = wrongCount;
@@ -871,7 +845,6 @@ function showGlobalSummary(){
   document.getElementById("finalMessage").textContent =
     getFinalMessage(percent);
 
-  // ISI DATA PRO SHARE CARD
   document.getElementById("proScore").textContent = score;
   document.getElementById("proCorrect").textContent = correct;
   document.getElementById("proWrong").textContent = wrongCount;
@@ -891,34 +864,31 @@ document.addEventListener("click", function(e){
 
   const percent = document.getElementById("finalPercent")?.textContent || "";
   const shareText = encodeURIComponent(
-    `Saya mendapat skor ${percent}% di Kuis Nahwu! Coba juga di sini: ${window.location.href}`
+    `Saya mendapat nilai ${percent} di Kuis AFHIMNA! Coba juga di sini: ${window.location.href}`
   );
 
-  // ===== RETRY =====
   if(e.target.id === "retryBtn"){
     location.reload();
   }
 
-  // ===== PENJELASAN TAMBAHAN =====
   if(e.target.id === "explainBtn"){
     window.open("https://www.google.com", "_blank");
   }
 
-  // ===== SHARE PRO IMAGE =====
   if(e.target.id === "shareBtn"){
 
     generateProImage(blob => {
 
-      const file = new File([blob], "hasil-kuis-nahwu.png", {
+      const file = new File([blob], "Nilai-kuis-AFHIMNA.png", {
         type: "image/png"
       });
 
-      const shareText = `Saya mendapat ${percent}% di Kuis Nahwu!`;
+      const shareText = `Saya mendapat ${percent} di Kuis AFHIMNA!`;
 
       if(navigator.share && navigator.canShare({ files: [file] })){
 
         navigator.share({
-          title: "Hasil Kuis Nahwu",
+          title: "Nilai-kuis-AFHIMNA",
           text: shareText,
           files: [file]
         });
@@ -928,7 +898,7 @@ document.addEventListener("click", function(e){
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url;
-        a.download = "hasil-kuis-nahwu.png";
+        a.download = "Nilai-kuis-AFHIMNA.png";
         a.click();
 
         alert("Gambar diunduh. Silakan bagikan secara manual.");
@@ -939,7 +909,6 @@ document.addEventListener("click", function(e){
 }); 
 async function generateProImage(callback){
 
-  // ✅ Pastikan font sudah siap sebelum render
   if (document.fonts) {
     await document.fonts.load('700 40px "Bokor"');
     await document.fonts.load('700 40px "Playfair Display"');
@@ -990,7 +959,7 @@ async function generateProImage(callback){
     
     ctx.font = "700 250px 'Playfair Display'";
     ctx.textAlign = "center";
-    ctx.fillStyle = gradeColor;   // warna murni
+    ctx.fillStyle = gradeColor;   
     ctx.shadowColor = "transparent";
     ctx.shadowBlur = 0;
     ctx.fillText(percent + "", centerX, h*0.30);
@@ -1007,18 +976,36 @@ async function generateProImage(callback){
     ctx.moveTo(w*0.25, h*0.46);
     ctx.lineTo(w*0.75, h*0.46);
     ctx.stroke();
+	
+	ctx.textAlign = "left";
+	ctx.font = "600 60px 'Bokor'";
+	ctx.fillStyle = "#ffffff";
+	
+	const leftX = w * 0.24;
+	const startY = h * 0.60;
+	const lineGap = h * 0.05;
+	const rows = [
+	{ label: "Jawaban Benar", value: correct },
+	{ label: "Jawaban Salah", value: wrongCount },
+	{ label: "Waktu Selesai", value: waktu }
+];
 
-    // =========================
-    // DETAIL TEXT (RIGHT ALIGN)
-    // =========================
-    ctx.textAlign = "left";
-    ctx.font = "600 60px 'Bokor'";
-    ctx.fillStyle = "#ffffff";
-    const leftX = w * 0.24;
-    ctx.font = "600 60px 'Bokor'";
-    ctx.fillText("Soal Benar     : " + correct, leftX, h*0.60);
-    ctx.fillText("Soal Salah     : " + wrongCount, leftX, h*0.65);
-    ctx.fillText("Waktu Selesai  : " + waktu, leftX, h*0.70);
+let maxWidth = 0;
+rows.forEach(row => {
+  const width = ctx.measureText(row.label).width;
+  if (width > maxWidth) maxWidth = width;
+});
+
+const colonX = leftX + maxWidth + 20;
+const valueX = colonX + 40;
+
+rows.forEach((row, i) => {
+  const y = startY + (i * lineGap);
+  ctx.fillText(row.label, leftX, y);
+  ctx.fillText(":", colonX, y);
+  ctx.fillText(row.value, valueX, y);
+});
+
 
     canvas.toBlob(blob => callback(blob), "image/png", 1.0);
   };
